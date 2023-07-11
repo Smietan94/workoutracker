@@ -1,0 +1,9 @@
+{
+    "php.version": "v8.2",
+    "files.associations": {
+        "*.module": "php"
+    },
+    "search.useIgnoreFiles": false,
+    "intelephense.completion.fullyQualifyGlobalConstantsAndFunctions": true,
+    "intelephense.completion.insertUseDeclaration": true,
+}

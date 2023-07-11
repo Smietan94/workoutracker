@@ -1,0 +1,76 @@
+{% extends 'layout.twig' %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('workoutPlans') }}
+{% endblock %}
+
+{% block title %}Workout Plans{% endblock %}
+
+{% block content %}
+    <div class="workoutplans container content-body">
+        <div class="text-end mb-4">
+            <button type="button" class="btn btn-primary new-workout-plan-btn">
+                <i class="bi bi-plus-circle me-1"></i>
+                New Workout Plan
+            </button>
+        </div>
+        <div class="modal fade" id="newWorkoutPlanModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">New Workout Plan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{ csrf.fields | raw }}
+                        <div class="form-outline form-white mb-4">
+                            <input type="text" name="name"
+                                    id="workout-name-input"
+                                    class="form-control form-control-lg"
+                                    placeholder="Workout Plan Name"/>
+                        </div>
+                        <div class="form-outline form-white mb-4">
+                            <input type="number" name="trainingsPerWeek" required
+                                    id="training-days-input"
+                                    class="form-control form-control-lg"
+                                    placeholder="Trainig Days" 
+                                    min="1"
+                                    max="7"/>
+                        </div>
+                        <div class="form-outline form-white mb-4">
+                            <input type="text" name="notes"
+                                    id="notes-input"
+                                    class="form-control form-control-lg"
+                                    placeholder="Notes"/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-1"></i>
+                            Close
+                        </button>
+                        <button type="submit" class="btn btn-success save-new-workout-plan-btn">
+                            <i class="bi bi-check-circle me-1"></i>
+                            Create
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div >
+            <table id="workoutPlansTable" width="100%">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Notes</th>
+                        <th>Trainigs Per Week</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
