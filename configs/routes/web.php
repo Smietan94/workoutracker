@@ -39,5 +39,7 @@ return function (App $app) {
         $workoutPlans->get('/load', [WorkoutPlansController::class, 'load']);
         $workoutPlans->post('', [WorkoutPlansController::class, 'store']);
         $workoutPlans->delete('/{id:[0-9]+}', [WorkoutPlansController::class, 'delete']);
+        $workoutPlans->get('/{id:[0-9]+}', [WorkoutPlansController::class, 'get']);
+        $workoutPlans->post('/{id:[0-9]+}', [WorkoutPlansController::class, 'update']);
     })->add(AuthMiddleware::class);
 };

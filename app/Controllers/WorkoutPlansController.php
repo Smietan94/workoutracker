@@ -8,6 +8,7 @@ namespace App\Controllers;
 use App\Contracts\RequestValidatorFactoryInterface;
 use App\Entity\WorkoutPlan;
 use App\RequestValidators\RegisterWorkoutPlanValidator;
+use App\RequestValidators\UpdateWorkoutPlanRequestValidator;
 use App\ResponseFormatter;
 use App\Services\RequestService;
 use App\Services\WorkoutPlanService;
@@ -80,5 +81,43 @@ class WorkoutPlansController
             $total,
             $total
         );
+    }
+
+    public function get(Request $request, Response $response, array $args): Response
+    {
+        $workoutPlan = $this->workoutPlanService->getById((int) $args['id']);
+
+        if (! $workoutPlan) {
+            return $response->withStatus(404);
+        }
+
+        $data = [
+            'id'    => $workoutPlan->getId(),
+            'name'  => $workoutPlan->getName(),
+            'notes' => $workoutPlan->getNotes()
+        ];
+
+        return $this->responseFormatter->asJson($response, $data);
+    }
+
+    public function update(Request $request, Response $response, array $args): Response
+    {
+        // TODO
+        $data = $this->requestValidatorFactory->make(UpdateWorkoutPlanRequestValidator::class)->validate(
+            $args + $request->getParsedBody()
+        );
+
+        $workoutPlan = $this->workoutPlanService->getById((int) $data['id']);
+        $params      = $this->workoutPlanService->getWorkoutPlanParams($data, $request->getAttribute('user'));
+
+        \var_dump($params);
+
+        if (! $workoutPlan) {
+            return $response->withStatus(404);
+        }
+
+        $this->workoutPlanService->update($workoutPlan, $params);
+
+        return $response;
     }
 }

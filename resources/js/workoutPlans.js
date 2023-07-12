@@ -4,8 +4,8 @@ import DataTable          from "datatables.net";
 
 // TODO po kazdym dodaniu workoutu do kazdego dnia
 window.addEventListener('DOMContentLoaded', function() {
-    const newWorkoutPlanModal = new Modal(document.getElementById('newWorkoutPlanModal'))
-
+    const newWorkoutPlanModal  = new Modal(document.getElementById('newWorkoutPlanModal'))
+    const editWorkoutPlanModal = new Modal(document.getElementById('editWorkoutPlanModal')) 
     document.querySelector('.new-workout-plan-btn').addEventListener('click', function(event) {
         openNewWorkoutPlanModal(newWorkoutPlanModal)
     })
@@ -60,6 +60,9 @@ window.addEventListener('DOMContentLoaded', function() {
         if (editBtn) {
             const workoutPlanId = editBtn.getAttribute('data-id')
 
+            get(`/workoutplans/${ workoutPlanId }`)
+                .then(response => response.json())
+                .then(response => openEditWorkoutPlanModal(editWorkoutPlanModal, response))
         } else {
             const workoutPlanId = deleteBtn.getAttribute('data-id')
 
@@ -70,7 +73,33 @@ window.addEventListener('DOMContentLoaded', function() {
             }
         }
     })
+
+    document.querySelector('.update-workout-plan-btn').addEventListener('click', function (event) {
+        const workoutPlanId = event.currentTarget.getAttribute('data-id')
+
+        post(`/workoutplans/${ workoutPlanId }`, {
+            name: editWorkoutPlanModal._element.querySelector('input[name="name"]').value,
+            notes: editWorkoutPlanModal._element.querySelector('input[name="notes"]').value
+        }, editWorkoutPlanModal._element).then(response => {
+            if (response.ok) {
+                table.draw()
+                editWorkoutPlanModal.hide()
+            }
+        })
+    })
 })
+
+function openEditWorkoutPlanModal(modal, {id, name, notes}) {
+    const nameInput  = modal._element.querySelector('input[name="name"]')
+    const notesInput = modal._element.querySelector('input[name="notes"]')
+
+    nameInput.value  = name
+    notesInput.value = notes
+
+    modal._element.querySelector('.update-workout-plan-btn').setAttribute('data-id', id)
+
+    modal.show()
+}
 
 function openNewWorkoutPlanModal(modal) {
     modal._element.querySelector('.new-workout-plan-btn')

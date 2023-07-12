@@ -46,6 +46,16 @@ class WorkoutPlanService
     public function update(WorkoutPlan $workoutPlan, WorkoutPlanParams $params): WorkoutPlan
     {
         // TODO
+        if ($workoutPlan->getName() !== $params->name) {
+            $workoutPlan->setName($params->name);
+        }
+
+        if ($workoutPlan->getNotes() !== $params->notes) {
+            $workoutPlan->setNotes($params->notes);
+        }
+
+        $this->entityManager->persist($workoutPlan);
+        $this->entityManager->flush();
 
         return $workoutPlan;
     }
@@ -91,5 +101,10 @@ class WorkoutPlanService
 
         $this->entityManager->remove($workoutPlan);
         $this->entityManager->flush();
+    }
+
+    public function getById(int $id): WorkoutPlan
+    {
+        return $this->entityManager->find(WorkoutPlan::class, $id);
     }
 }

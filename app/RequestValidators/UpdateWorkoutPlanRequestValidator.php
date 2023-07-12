@@ -10,14 +10,12 @@ use App\Exception\ValidationException;
 use Valitron\Validator;
 #endregion
 
-class RegisterWorkoutPlanValidator implements RequestValidatorInterface
+class UpdateWorkoutPlanRequestValidator implements RequestValidatorInterface
 {
     public function validate(array $data): array
     {
         $v = new Validator($data);
 
-        $v->rule('required', ['trainingsPerWeek']);
-        $v->rule('lengthMax', 'trainingsPerWeek', 1);
         $v->rule('lengthMax', 'name', 50);
         $v->rule('lengthMax', 'notes', 100);
 

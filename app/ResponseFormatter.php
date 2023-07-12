@@ -25,8 +25,7 @@ class ResponseFormatter
         array $data,
         int $draw,
         int $total
-    )
-    {
+    ) {
         return $this->asJson(
             $response,
             [
