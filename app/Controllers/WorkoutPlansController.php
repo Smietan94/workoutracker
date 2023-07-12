@@ -52,6 +52,7 @@ class WorkoutPlansController
 
     public function delete(Request $request, Response $response, array $args): Response
     {
+        // TODO menage exercise deleting
         $this->workoutPlanService->delete((int) $args['id']);
 
         return $response;
@@ -68,7 +69,8 @@ class WorkoutPlansController
                 'name'             => $workoutPlan->getName(),
                 'trainingsPerWeek' => $workoutPlan->getTrainingsPerWeek(),
                 'notes'            => $workoutPlan->getNotes(),
-                'createdAt'        => $workoutPlan->getCreatedAt()->format('d/m/Y g:i A')
+                'createdAt'        => $workoutPlan->getCreatedAt()->format('d/m/Y g:i A'),
+                'updatedAt'        => $workoutPlan->getUpdatedAt()->format('d/m/Y g:i A')
             ];
         };
 
@@ -109,8 +111,6 @@ class WorkoutPlansController
 
         $workoutPlan = $this->workoutPlanService->getById((int) $data['id']);
         $params      = $this->workoutPlanService->getWorkoutPlanParams($data, $request->getAttribute('user'));
-
-        \var_dump($params);
 
         if (! $workoutPlan) {
             return $response->withStatus(404);

@@ -45,7 +45,6 @@ class WorkoutPlanService
 
     public function update(WorkoutPlan $workoutPlan, WorkoutPlanParams $params): WorkoutPlan
     {
-        // TODO
         if ($workoutPlan->getName() !== $params->name) {
             $workoutPlan->setName($params->name);
         }

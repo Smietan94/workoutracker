@@ -35,6 +35,7 @@ window.addEventListener('DOMContentLoaded', function() {
             {data: "notes"},
             {data: "trainingsPerWeek"},
             {data: "createdAt"},
+            {data: "updatedAt"},
             {
                 sortable: false,
                 data: row => `
