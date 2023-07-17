@@ -6,6 +6,7 @@ namespace App\Controllers;
 
 #region Use-Statemsnts
 use App\Contracts\RequestValidatorFactoryInterface;
+use App\Contracts\SessionInterface;
 use App\Entity\WorkoutPlan;
 use App\RequestValidators\RegisterWorkoutPlanValidator;
 use App\RequestValidators\UpdateWorkoutPlanRequestValidator;
@@ -24,7 +25,8 @@ class WorkoutPlansController
         private readonly RequestValidatorFactoryInterface $requestValidatorFactory,
         private readonly WorkoutPlanService $workoutPlanService,
         private readonly ResponseFormatter $responseFormatter, 
-        private readonly RequestService $requestService
+        private readonly RequestService $requestService,
+        private readonly SessionInterface $session,
     ){
     }
 
@@ -46,6 +48,8 @@ class WorkoutPlansController
         $params = $this->workoutPlanService->getWorkoutPlanParams($data, $request->getAttribute('user'));
 
         $this->workoutPlanService->create($params);
+
+        $this->session->put("trainings_per_week", $params->trainingsPerWeek);
 
         return $response;
     }
@@ -69,7 +73,7 @@ class WorkoutPlansController
                 'trainingsPerWeek' => $workoutPlan->getTrainingsPerWeek(),
                 'notes'            => $workoutPlan->getNotes(),
                 'createdAt'        => $workoutPlan->getCreatedAt()->format('d/m/Y g:i A'),
-                'updatedAt'        => $workoutPlan->getUpdatedAt()->format('d/m/Y g:i A')
+                'updatedAt'        => $workoutPlan->getUpdatedAt()->format('d/m/Y g:i A'),
             ];
         };
 
@@ -122,8 +126,8 @@ class WorkoutPlansController
 
     public function addExercise(Request $request, Response $response): Response
     {
-        // TODO
-
+        // TODO ExerciseRequestValidator, 
+        
         return $response;
     }
 }
