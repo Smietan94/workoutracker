@@ -41,5 +41,6 @@ return function (App $app) {
         $workoutPlans->delete('/{id:[0-9]+}', [WorkoutPlansController::class, 'delete']);
         $workoutPlans->get('/{id:[0-9]+}', [WorkoutPlansController::class, 'get']);
         $workoutPlans->post('/{id:[0-9]+}', [WorkoutPlansController::class, 'update']);
+        $workoutPlans->post('/addexercise', [WorkoutPlansController::class, 'addExercise']);
     })->add(AuthMiddleware::class);
 };

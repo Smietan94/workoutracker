@@ -6,6 +6,8 @@ import DataTable          from "datatables.net";
 window.addEventListener('DOMContentLoaded', function() {
     const newWorkoutPlanModal  = new Modal(document.getElementById('newWorkoutPlanModal'))
     const editWorkoutPlanModal = new Modal(document.getElementById('editWorkoutPlanModal')) 
+    const addExerciseModal     = new Modal(document.getElementById('addExerciseModal'))
+
     document.querySelector('.new-workout-plan-btn').addEventListener('click', function(event) {
         openNewWorkoutPlanModal(newWorkoutPlanModal)
     })
@@ -22,6 +24,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('training-days-input').value = ''
                 document.getElementById('notes-input').value = ''
                 newWorkoutPlanModal.hide()
+                addExerciseModal.show()
             }
         })
     })
@@ -79,7 +82,7 @@ window.addEventListener('DOMContentLoaded', function() {
         const workoutPlanId = event.currentTarget.getAttribute('data-id')
 
         post(`/workoutplans/${ workoutPlanId }`, {
-            name: editWorkoutPlanModal._element.querySelector('input[name="name"]').value,
+            name:  editWorkoutPlanModal._element.querySelector('input[name="name"]').value,
             notes: editWorkoutPlanModal._element.querySelector('input[name="notes"]').value
         }, editWorkoutPlanModal._element).then(response => {
             if (response.ok) {
@@ -87,6 +90,25 @@ window.addEventListener('DOMContentLoaded', function() {
                 editWorkoutPlanModal.hide()
             }
         })
+    })
+
+    let setCounter = 1
+    document.querySelector('.add-set-btn').addEventListener('click', function (event) {
+        const setsConainer = document.getElementById('setsContainer')
+        const newSet       = document.createElement('input')
+
+        newSet.type        = 'number'
+        newSet.name        = 'set' + (++setCounter)
+        newSet.placeholder = 'Set ' + setCounter
+        newSet.min         = "1"
+        newSet.classList.add('form-control')
+        newSet.classList.add('form-control-lg')
+        newSet.classList.add('mt-4')
+        setsConainer.appendChild(newSet)
+    })
+
+    document.querySelector('.add-new-exercise-btn').addEventListener('click', function(event) {
+        
     })
 })
 

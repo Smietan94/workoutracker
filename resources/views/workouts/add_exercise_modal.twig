@@ -1,4 +1,4 @@
-<div class="modal fade" id="addExercisesModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="addExerciseModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -12,21 +12,25 @@
                         class="form-control form-control-lg"
                         placeholder="Exercise Name"/>
                 </div>
-                <div class="form-outline form-white mb-4">
-                    <input type="number" name="sets"
-                        class="form-control form-control-lg"
-                        placeholder="Sets Number"
+                <div class="form-outlilne form-white mb-4" id="setsContainer">
+                    <input type="number" name="set1"
+                        class="form-control form-control-lg "
+                        placeholder="Set 1"
                         min="1"/>
                 </div>
+                <button type="button" class="btn btn-secondary add-set-btn">
+                    <i class="bi bi-plus-circle me-1"></i>
+                    Add Set
+                </button>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle me-1"></i>
-                    Close
+                <button type="button" class="btn btn-secondary add-new-exercise-btn">
+                    <i class="bi bi-plus-square me-1"></i>
+                    Add Exercise
                 </button>
-                <button type="submit" class="btn btn-success add-new-exercise-btn">
-                    <i class="bi bi-check-circle me-1"></i>
-                    Update
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-calendar-plus me-1"></i>
+                    Next Training Day
                 </button>
             </div>
         </div>

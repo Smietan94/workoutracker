@@ -52,7 +52,6 @@ class WorkoutPlansController
 
     public function delete(Request $request, Response $response, array $args): Response
     {
-        // TODO menage exercise deleting
         $this->workoutPlanService->delete((int) $args['id']);
 
         return $response;
@@ -117,6 +116,13 @@ class WorkoutPlansController
         }
 
         $this->workoutPlanService->update($workoutPlan, $params);
+
+        return $response;
+    }
+
+    public function addExercise(Request $request, Response $response): Response
+    {
+        // TODO
 
         return $response;
     }
