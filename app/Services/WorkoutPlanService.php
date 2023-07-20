@@ -32,12 +32,6 @@ class WorkoutPlanService
 
         $this->entityManager->persist($workoutPlan);
 
-        for ($i=0; $i < $params->trainingsPerWeek; $i++) {
-            $trainingDay = new TrainingDay();
-            $trainingDay->setWorkoutPlan($workoutPlan);
-            $this->entityManager->persist($trainingDay);
-        }
-
         $this->entityManager->flush();
 
         return $workoutPlan;

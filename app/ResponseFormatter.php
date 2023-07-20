@@ -31,7 +31,7 @@ class ResponseFormatter
             [
                 'data'            => $data,
                 'draw'            => $draw,
-                'recordsTotal'     => $total,
+                'recordsTotal'    => $total,
                 'recordsFiltered' => $total
             ]
         );

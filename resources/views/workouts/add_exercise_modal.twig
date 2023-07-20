@@ -2,9 +2,10 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add Exercise To Plan</h5>
+                <h5 class="modal-title" id="m-title">Add Exercise To Plan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            {# <form method="post" action="/workoutplans/addexercise"> #}
             <div class="modal-body">
                 {{ csrf.fields | raw }}
                 <div class="form-outline form-white mb-4">
@@ -12,11 +13,13 @@
                         class="form-control form-control-lg"
                         placeholder="Exercise Name"/>
                 </div>
-                <div class="form-outlilne form-white mb-4" id="setsContainer">
-                    <input type="number" name="set1"
-                        class="form-control form-control-lg "
-                        placeholder="Set 1"
-                        min="1"/>
+                <div class="mb-4" id="setsContainer">
+                    <div class="form-outlilne form-white mb-4">
+                        <input type="number" name="set1"
+                            class="sets-input form-control form-control-lg "
+                            placeholder="Set 1"
+                            min="1"/>
+                    </div>
                 </div>
                 <button type="button" class="btn btn-secondary add-set-btn">
                     <i class="bi bi-plus-circle me-1"></i>
@@ -33,6 +36,10 @@
                     Next Training Day
                 </button>
             </div>
+            {# <button class="btn btn-primary bg-gradient text-white btn-lg px-5" type="submit">
+                save
+            </button>
+            </form> #}
         </div>
     </div>
 </div>

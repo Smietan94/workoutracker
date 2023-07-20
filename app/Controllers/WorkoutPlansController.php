@@ -7,11 +7,15 @@ namespace App\Controllers;
 #region Use-Statemsnts
 use App\Contracts\RequestValidatorFactoryInterface;
 use App\Contracts\SessionInterface;
+use App\DTO\ExerciseParams;
 use App\Entity\WorkoutPlan;
+use App\RequestValidators\RegisterExerciseRequestValidator;
 use App\RequestValidators\RegisterWorkoutPlanValidator;
 use App\RequestValidators\UpdateWorkoutPlanRequestValidator;
 use App\ResponseFormatter;
+use App\Services\ExerciseService;
 use App\Services\RequestService;
+use App\Services\TrainingDayService;
 use App\Services\WorkoutPlanService;
 use Slim\Views\Twig;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -24,6 +28,8 @@ class WorkoutPlansController
         private readonly Twig $twig,
         private readonly RequestValidatorFactoryInterface $requestValidatorFactory,
         private readonly WorkoutPlanService $workoutPlanService,
+        private readonly TrainingDayService $trainingDayService,
+        private readonly ExerciseService $exerciseService,
         private readonly ResponseFormatter $responseFormatter, 
         private readonly RequestService $requestService,
         private readonly SessionInterface $session,
@@ -47,7 +53,11 @@ class WorkoutPlansController
 
         $params = $this->workoutPlanService->getWorkoutPlanParams($data, $request->getAttribute('user'));
 
-        $this->workoutPlanService->create($params);
+        $workoutPlan = $this->workoutPlanService->create($params);
+
+        for ($i=0; $i < $params->trainingsPerWeek; $i++) {
+            $this->trainingDayService->create($workoutPlan);
+        }
 
         $this->session->put("trainings_per_week", $params->trainingsPerWeek);
 
@@ -126,8 +136,13 @@ class WorkoutPlansController
 
     public function addExercise(Request $request, Response $response): Response
     {
-        // TODO ExerciseRequestValidator, 
-        
+        // TODO ExerciseRequestValidator,
+        $data = $this->requestValidatorFactory->make(RegisterExerciseRequestValidator::class)->validate(
+            $request->getParsedBody()
+        );
+
+        // $params = $this->exerciseService->getExerciseParams($data);
+
         return $response;
     }
 }

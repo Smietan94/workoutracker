@@ -2,7 +2,6 @@ import { Modal }          from "bootstrap";
 import { get, post, del } from "./ajax";
 import DataTable          from "datatables.net";
 
-// TODO po kazdym dodaniu workoutu do kazdego dnia
 window.addEventListener('DOMContentLoaded', function() {
     const newWorkoutPlanModal  = new Modal(document.getElementById('newWorkoutPlanModal'))
     const editWorkoutPlanModal = new Modal(document.getElementById('editWorkoutPlanModal')) 
@@ -95,21 +94,15 @@ window.addEventListener('DOMContentLoaded', function() {
     let setCounter = 1
     document.querySelector('.add-set-btn').addEventListener('click', function (event) {
         const setsConainer = document.getElementById('setsContainer')
-        const newSet       = document.createElement('input')
-
-        newSet.type        = 'number'
-        newSet.name        = 'set' + (++setCounter)
-        newSet.placeholder = 'Set ' + setCounter
-        newSet.min         = "1"
-        newSet.classList.add('form-control')
-        newSet.classList.add('form-control-lg')
-        newSet.classList.add('mt-4')
-        setsConainer.appendChild(newSet)
+        addInput(setsConainer, setCounter)
+        setCounter++
     })
 
     document.querySelector('.add-new-exercise-btn').addEventListener('click', function(event) {
-        
+        addExercise(addExerciseModal, table)
+        setCounter = 1
     })
+
 })
 
 function openEditWorkoutPlanModal(modal, {id, name, notes}) {
@@ -128,4 +121,54 @@ function openNewWorkoutPlanModal(modal) {
     modal._element.querySelector('.new-workout-plan-btn')
 
     modal.show()
+}
+
+function addInput(setsConainer, setCounter) {
+    const newSet       = document.createElement('input')
+    const inputDiv     = document.createElement('div')
+
+    inputDiv.classList.add('form-outline')
+    inputDiv.classList.add('form-white')
+    newSet.classList.add('sets-input')
+    newSet.classList.add('form-control')
+    newSet.classList.add('form-control-lg')
+
+    newSet.type        = 'number'
+    newSet.name        = 'set' + (++setCounter)
+    newSet.placeholder = 'Set ' + setCounter
+    newSet.min         = "1"
+
+    if (setCounter > 1) {
+        newSet.classList.add('mt-4')
+    }
+
+    inputDiv.appendChild(newSet)
+    setsConainer.appendChild(inputDiv)
+}
+
+function addExercise(modal, table) {
+    const setsContainer = document.getElementById('setsContainer')
+    const sets = setsContainer.querySelectorAll('.sets-input')
+    const nameInput = modal._element.querySelector('input[name="name"]')
+
+    const data = new FormData()
+    data['name'] = nameInput.value
+
+    for (let i = 0; i < sets.length; i++) {
+        data[sets[i].name] = sets[i].value
+    }
+
+    post(`workoutplans/addexercise`, 
+        data, modal._element).then(response => {
+        if (response.ok) {
+            table.draw()
+            modal.hide()
+            nameInput.value = ''
+            setsContainer.innerHTML = ''
+            addInput(setsContainer, 0)
+            setTimeout(() => {
+                modal.show();
+            }, 500);
+        }
+    })
 }
