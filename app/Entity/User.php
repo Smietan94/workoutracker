@@ -39,10 +39,10 @@ class User implements UserInterface
     #[Column]
     private string $username;
 
-    #[OneToMany(mappedBy: 'users', targetEntity: WorkoutPlan::class)]
+    #[OneToMany(mappedBy: 'User', targetEntity: WorkoutPlan::class)]
     private Collection $workoutPlans;
 
-    #[OneToMany(mappedBy: 'users', targetEntity: Category::class)]
+    #[OneToMany(mappedBy: 'User', targetEntity: Category::class)]
     private Collection $categories;
 
     public function __construct()

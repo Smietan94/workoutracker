@@ -3,6 +3,10 @@ import { get, post, del } from "./ajax";
 import DataTable          from "datatables.net";
 
 window.addEventListener('DOMContentLoaded', function() {
+    let setCounter  = 1
+    let trainingDay = 0
+    let trainingsPerWeek
+
     const newWorkoutPlanModal  = new Modal(document.getElementById('newWorkoutPlanModal'))
     const editWorkoutPlanModal = new Modal(document.getElementById('editWorkoutPlanModal')) 
     const addExerciseModal     = new Modal(document.getElementById('addExerciseModal'))
@@ -12,9 +16,10 @@ window.addEventListener('DOMContentLoaded', function() {
     })
 
     document.querySelector('.save-new-workout-plan-btn').addEventListener('click', function(event) {
+        trainingsPerWeek = newWorkoutPlanModal._element.querySelector('input[name="trainingsPerWeek"]').value
         post('/workoutplans', {
             name:             newWorkoutPlanModal._element.querySelector('input[name="name"]').value,
-            trainingsPerWeek: newWorkoutPlanModal._element.querySelector('input[name="trainingsPerWeek"]').value,
+            trainingsPerWeek: trainingsPerWeek,
             notes:            newWorkoutPlanModal._element.querySelector('input[name="notes"]').value
         }, newWorkoutPlanModal._element).then(response => {
             if (response.ok) {
@@ -26,6 +31,17 @@ window.addEventListener('DOMContentLoaded', function() {
                 addExerciseModal.show()
             }
         })
+        if (trainingsPerWeek - 1 == trainingDay) {
+            document.getElementById('save-training-day-btn').innerHTML = `
+                <i class="bi bi-save me-1"></i>
+                Finish
+            `
+        } else {
+            document.getElementById('save-training-day-btn').innerHTML = `
+                <i class="bi bi-calendar-plus me-1"></i>
+                Next Training Day
+            `
+        }
     })
 
     const table = new DataTable('#workoutPlansTable', {
@@ -91,7 +107,6 @@ window.addEventListener('DOMContentLoaded', function() {
         })
     })
 
-    let setCounter = 1
     document.querySelector('.add-set-btn').addEventListener('click', function (event) {
         const setsConainer = document.getElementById('setsContainer')
         addInput(setsConainer, setCounter)
@@ -99,10 +114,40 @@ window.addEventListener('DOMContentLoaded', function() {
     })
 
     document.querySelector('.add-new-exercise-btn').addEventListener('click', function(event) {
-        addExercise(addExerciseModal, table)
+        addExercise(addExerciseModal, table, trainingDay)
+        setTimeout(() => {
+            addExerciseModal.show()
+        }, 500);
         setCounter = 1
     })
 
+    document.querySelector('.next-training-day-btn').addEventListener('click', function(event) {
+        addExercise(addExerciseModal, table, trainingDay++)
+        if (trainingsPerWeek > trainingDay) {
+            setTimeout(() => {
+                document.getElementById('save-training-day-btn').innerHTML = `
+                    <i class="bi bi-save me-1"></i>
+                    Finish
+                `
+            }, 500)
+            setTimeout(() => {
+                addExerciseModal.show();
+            }, 500)
+        } else {
+            trainingDay = 0
+        }
+        setCounter = 1
+    })
+
+    document.querySelector('.remove-set-btn').addEventListener('click', function (event) {
+        let setsInputs = document.querySelectorAll('.set-input-div')
+
+        if (setsInputs.length > 1) {
+            let lastInputDiv = setsInputs[setsInputs.length - 1]
+            lastInputDiv.remove()
+            setCounter-- 
+        }
+    })
 })
 
 function openEditWorkoutPlanModal(modal, {id, name, notes}) {
@@ -124,11 +169,12 @@ function openNewWorkoutPlanModal(modal) {
 }
 
 function addInput(setsConainer, setCounter) {
-    const newSet       = document.createElement('input')
-    const inputDiv     = document.createElement('div')
+    const newSet   = document.createElement('input')
+    const inputDiv = document.createElement('div')
 
     inputDiv.classList.add('form-outline')
     inputDiv.classList.add('form-white')
+    inputDiv.classList.add('set-input-div')
     newSet.classList.add('sets-input')
     newSet.classList.add('form-control')
     newSet.classList.add('form-control-lg')
@@ -146,13 +192,15 @@ function addInput(setsConainer, setCounter) {
     setsConainer.appendChild(inputDiv)
 }
 
-function addExercise(modal, table) {
+function addExercise(modal, table, trainingDay) {
     const setsContainer = document.getElementById('setsContainer')
-    const sets = setsContainer.querySelectorAll('.sets-input')
-    const nameInput = modal._element.querySelector('input[name="name"]')
+    const sets          = setsContainer.querySelectorAll('.sets-input')
+    const nameInput     = modal._element.querySelector('input[name="name"]')
+    const data          = new FormData()
 
-    const data = new FormData()
-    data['name'] = nameInput.value
+    data['name']        = nameInput.value
+    data['trainingDay'] = trainingDay
+    console.log(data)
 
     for (let i = 0; i < sets.length; i++) {
         data[sets[i].name] = sets[i].value
@@ -166,9 +214,7 @@ function addExercise(modal, table) {
             nameInput.value = ''
             setsContainer.innerHTML = ''
             addInput(setsContainer, 0)
-            setTimeout(() => {
-                modal.show();
-            }, 500);
+            console.log(response)
         }
     })
 }

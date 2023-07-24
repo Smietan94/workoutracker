@@ -7,6 +7,7 @@ namespace App\Services;
 #region Use-Statements
 use App\DTO\DataTableQueryParams;
 use App\DTO\WorkoutPlanParams;
+use App\Entity\Exercise;
 use App\Entity\TrainingDay;
 use App\Entity\User;
 use App\Entity\WorkoutPlan;
@@ -89,6 +90,10 @@ class WorkoutPlanService
         $trainingDays = $this->entityManager->getRepository(TrainingDay::class)->findBy(['workoutPlan' => $workoutPlan]);
 
         foreach($trainingDays as $tD) {
+            $exercises = $this->entityManager->getRepository(Exercise::class)->findBy(['trainingDay' => $tD]);
+            foreach($exercises as $exercise) {
+                $this->entityManager->remove($exercise);
+            }
             $this->entityManager->remove($tD);
         }
 

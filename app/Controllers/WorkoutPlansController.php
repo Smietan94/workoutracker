@@ -7,7 +7,6 @@ namespace App\Controllers;
 #region Use-Statemsnts
 use App\Contracts\RequestValidatorFactoryInterface;
 use App\Contracts\SessionInterface;
-use App\DTO\ExerciseParams;
 use App\Entity\WorkoutPlan;
 use App\RequestValidators\RegisterExerciseRequestValidator;
 use App\RequestValidators\RegisterWorkoutPlanValidator;
@@ -59,7 +58,8 @@ class WorkoutPlansController
             $this->trainingDayService->create($workoutPlan);
         }
 
-        $this->session->put("trainings_per_week", $params->trainingsPerWeek);
+        $this->session->put("TRAININGS_PER_WEEK", $params->trainingsPerWeek);
+        $this->session->put('CURRENTLY_ADDED_WORKOUT_PLAN_ID', $workoutPlan->getId());
 
         return $response;
     }
@@ -141,8 +141,23 @@ class WorkoutPlansController
             $request->getParsedBody()
         );
 
-        // $params = $this->exerciseService->getExerciseParams($data);
+        $workoutPlanId = $this->session->get('CURRENTLY_ADDED_WORKOUT_PLAN_ID');
+        $workoutPlan   = $this->workoutPlanService->getById($workoutPlanId);
+        $trainingDays  = $workoutPlan->getTrainingDays()->getIterator();
+        $trainingDay   = $data['trainingDay'];
+
+        $params = $this->exerciseService->getExerciseParams(($data + ['trainingDayId' => $trainingDays[$trainingDay]->getId()]));
+        $this->exerciseService->storeExercise($params);
 
         return $response;
     }
+
+    public function getTrainingsPerWeek(Request $request, Response $response): Response
+    {
+        $data = [
+            'trainingsPerWeek' => $this->session->get('TRAININGS_PER_WEEK')
+        ];
+
+        return $this->responseFormatter->asJson($response, $data);
+    } 
 }

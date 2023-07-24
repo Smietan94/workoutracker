@@ -42,5 +42,6 @@ return function (App $app) {
         $workoutPlans->get('/{id:[0-9]+}', [WorkoutPlansController::class, 'get']);
         $workoutPlans->post('/{id:[0-9]+}', [WorkoutPlansController::class, 'update']);
         $workoutPlans->post('/addexercise', [WorkoutPlansController::class, 'addExercise']);
+        $workoutPlans->get('/getTPW', [WorkoutPlansController::class, 'getTrainingsPerWeek']);
     })->add(AuthMiddleware::class);
 };

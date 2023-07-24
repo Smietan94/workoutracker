@@ -20,7 +20,7 @@ class RegisterExerciseRequestValidator implements RequestValidatorInterface
         $lengthMax = [];
 
         for ($i = 0; $i < \count($fieldNames); $i++) {
-            if (! \in_array($fieldNames[$i], ['csrf_name', 'csrf_value', 'name'])) {
+            if (! \in_array($fieldNames[$i], ['csrf_name', 'csrf_value', 'name', 'trainingDay'])) {
                 \array_push($lengthMax, [$fieldNames[$i], 2]);
             }
         }

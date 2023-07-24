@@ -2,7 +2,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="m-title">Add Exercise To Plan</h5>
+                <h5 class="modal-title" id="add-exercise-title">Add Exercise To Plan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             {# <form method="post" action="/workoutplans/addexercise"> #}
@@ -14,7 +14,7 @@
                         placeholder="Exercise Name"/>
                 </div>
                 <div class="mb-4" id="setsContainer">
-                    <div class="form-outlilne form-white mb-4">
+                    <div class="form-outlilne form-white mb-4 set-input-div">
                         <input type="number" name="set1"
                             class="sets-input form-control form-control-lg "
                             placeholder="Set 1"
@@ -23,7 +23,11 @@
                 </div>
                 <button type="button" class="btn btn-secondary add-set-btn">
                     <i class="bi bi-plus-circle me-1"></i>
-                    Add Set
+                     Set
+                </button>
+                <button type="button" class="btn btn-secondary del-set-btn remove-set-btn">
+                    <i class="bi bi-dash-circle me-1"></i>
+                     Set
                 </button>
             </div>
             <div class="modal-footer">
@@ -31,7 +35,7 @@
                     <i class="bi bi-plus-square me-1"></i>
                     Add Exercise
                 </button>
-                <button type="submit" class="btn btn-success">
+                <button type="button" class="btn btn-success next-training-day-btn" id="save-training-day-btn">
                     <i class="bi bi-calendar-plus me-1"></i>
                     Next Training Day
                 </button>

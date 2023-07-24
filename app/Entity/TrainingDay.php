@@ -42,10 +42,10 @@ class TrainingDay
     #[ManyToOne(inversedBy: 'training_days')]
     private WorkoutPlan $workoutPlan;
 
-    #[OneToMany(mappedBy: 'training_day', targetEntity: TrainingDayResult::class)]
+    #[OneToMany(mappedBy: 'trainingDay', targetEntity: TrainingDayResult::class)]
     private Collection $trainingDayResults;
 
-    #[OneToMany(mappedBy: 'training_day', targetEntity: Exercise::class)]
+    #[OneToMany(mappedBy: 'trainingDay', targetEntity: Exercise::class)]
     private Collection $exercises;
 
     public function __construct()

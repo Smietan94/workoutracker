@@ -41,13 +41,13 @@ class Category
     //     $this->workoutPlans = new ArrayCollection();
     // }
 
-    #[OneToMany(mappedBy: 'category', targetEntity: Exercise::class)]
-    private Collection $exercise;
+    // #[OneToMany(mappedBy: 'Category', targetEntity: Exercise::class)]
+    // private Collection $exercise;
 
-    public function __construct()
-    {
-        $this->exercise = new ArrayCollection();
-    }
+    // public function __construct()
+    // {
+    //     $this->exercise = new ArrayCollection();
+    // }
 
     public function getId(): int
     {
@@ -103,17 +103,17 @@ class Category
         return $this;
     }
 
-    public function getExercise(): Collection
-    {
-        return $this->exercise;
-    }
+    // public function getExercise(): Collection
+    // {
+    //     return $this->exercise;
+    // }
 
-    public function addExercise(Exercise $exercise): Category
-    {
-        $this->exercise->add($exercise);
+    // public function addExercise(Exercise $exercise): Category
+    // {
+    //     $this->exercise->add($exercise);
 
-        return $this;
-    }
+    //     return $this;
+    // }
     
     // public function getWorkoutPlans(): Collection
     // {
