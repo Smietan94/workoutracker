@@ -12,6 +12,7 @@ use App\RequestValidators\RegisterExerciseRequestValidator;
 use App\RequestValidators\RegisterWorkoutPlanValidator;
 use App\RequestValidators\UpdateWorkoutPlanRequestValidator;
 use App\ResponseFormatter;
+use App\Services\CategoryService;
 use App\Services\ExerciseService;
 use App\Services\RequestService;
 use App\Services\TrainingDayService;
@@ -26,6 +27,7 @@ class WorkoutPlansController
     public function __construct(
         private readonly Twig $twig,
         private readonly RequestValidatorFactoryInterface $requestValidatorFactory,
+        private readonly CategoryService $categoryService,
         private readonly WorkoutPlanService $workoutPlanService,
         private readonly TrainingDayService $trainingDayService,
         private readonly ExerciseService $exerciseService,
@@ -145,6 +147,12 @@ class WorkoutPlansController
         $workoutPlan   = $this->workoutPlanService->getById($workoutPlanId);
         $trainingDays  = $workoutPlan->getTrainingDays()->getIterator();
         $trainingDay   = $data['trainingDay'];
+
+        $category = $this->categoryService->getByName($data['categoryName']);
+
+        if (! $category) {
+            $this->categoryService->create($data['categoryName']);
+        } 
 
         $params = $this->exerciseService->getExerciseParams(($data + ['trainingDayId' => $trainingDays[$trainingDay]->getId()]));
         $this->exerciseService->storeExercise($params);

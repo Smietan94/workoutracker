@@ -193,13 +193,15 @@ function addInput(setsConainer, setCounter) {
 }
 
 function addExercise(modal, table, trainingDay) {
-    const setsContainer = document.getElementById('setsContainer')
-    const sets          = setsContainer.querySelectorAll('.sets-input')
-    const nameInput     = modal._element.querySelector('input[name="name"]')
-    const data          = new FormData()
+    const setsContainer     = document.getElementById('setsContainer')
+    const sets              = setsContainer.querySelectorAll('.sets-input')
+    const nameInput         = modal._element.querySelector('input[name="name"]')
+    const categoryNameInput = modal._element.querySelector('input[name="categoryName"]')
+    const data              = new FormData()
 
-    data['name']        = nameInput.value
-    data['trainingDay'] = trainingDay
+    data['name']         = nameInput.value
+    data['categoryName'] = categoryNameInput.value
+    data['trainingDay']  = trainingDay
     console.log(data)
 
     for (let i = 0; i < sets.length; i++) {

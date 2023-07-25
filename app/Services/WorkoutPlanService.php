@@ -89,6 +89,7 @@ class WorkoutPlanService
         $workoutPlan  = $this->entityManager->find(WorkoutPlan::class, $id);
         $trainingDays = $this->entityManager->getRepository(TrainingDay::class)->findBy(['workoutPlan' => $workoutPlan]);
 
+        // TODO refactor this
         foreach($trainingDays as $tD) {
             $exercises = $this->entityManager->getRepository(Exercise::class)->findBy(['trainingDay' => $tD]);
             foreach($exercises as $exercise) {

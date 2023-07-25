@@ -19,9 +19,9 @@ class RegisterExerciseRequestValidator implements RequestValidatorInterface
         $fieldNames = \array_keys($data);
         $lengthMax = [];
 
-        for ($i = 0; $i < \count($fieldNames); $i++) {
-            if (! \in_array($fieldNames[$i], ['csrf_name', 'csrf_value', 'name', 'trainingDay'])) {
-                \array_push($lengthMax, [$fieldNames[$i], 2]);
+        foreach($fieldNames as $key) {
+            if (\preg_match('/set\d+/', $key)) {
+                \array_push($lengthMax, [$key, 2]);
             }
         }
 

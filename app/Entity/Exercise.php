@@ -36,8 +36,11 @@ class Exercise
     #[ManyToOne(inversedBy: 'exercises')]
     private TrainingDay $trainingDay;
 
-    // #[ManyToOne(inversedBy: 'exercises')]
-    // private Category $category;
+    #[ManyToOne(inversedBy: 'exercises')]
+    private Category $category;
+
+    // #[OneToMany(mappedBy: 'Exercise', targetEntity: Category::class)]
+    // private Collection $categories;
 
     #[OneToMany(mappedBy: 'Exercise', targetEntity: Set::class)]
     private Collection $sets;
@@ -47,6 +50,7 @@ class Exercise
 
     public function __construct()
     {
+        // $this->categories      = new ArrayCollection();
         $this->sets            = new ArrayCollection();
         $this->exerciseResults = new ArrayCollection();
     }
@@ -117,18 +121,30 @@ class Exercise
         return $this;
     }
 
-    // public function getCategory(): Category
+    // public function getCategories(): Collection
     // {
-    //     return $this->category;
+    //     return $this->categories;
     // }
 
-    // public function setCategory(Category $category): Exercise
+    // public function addCategory(Category $category): Exercise
     // {
-    //     $category->addExercise($this);
-    //     $this->category = $category;
+    //     $this->categories->add($category);
 
     //     return $this;
     // }
+
+    public function getCategory(): Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(Category $category): Exercise
+    {
+        $category->addExercise($this);
+        $this->category = $category;
+
+        return $this;
+    }
 
     public function getSets(): Collection
     {

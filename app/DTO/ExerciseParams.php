@@ -11,7 +11,7 @@ class ExerciseParams
 {
     public function __construct(
         public readonly TrainingDay $trainingDay,
-        // public readonly Category $category = null,
+        public readonly Category $category,
         public readonly string $name,
         public readonly int $setsNumber,
         public readonly array $sets,

@@ -27,11 +27,11 @@ class Category
     #[Id, Column(options: ['unsigned' => true]), GeneratedValue]
     private int $id;
 
-    #[Column]
+    #[Column(unique: true)]
     private string $name;
 
-    #[ManyToOne(inversedBy: 'categories')]
-    private User $user;
+    // #[ManyToOne(inversedBy: 'categories')]
+    // private User $user;
 
     // #[OneToMany(mappedBy: 'category', targetEntity: WorkoutPlan::class)]
     // private Collection $workoutPlans;
@@ -41,13 +41,16 @@ class Category
     //     $this->workoutPlans = new ArrayCollection();
     // }
 
-    // #[OneToMany(mappedBy: 'Category', targetEntity: Exercise::class)]
-    // private Collection $exercise;
+    #[OneToMany(mappedBy: 'Category', targetEntity: Exercise::class)]
+    private Collection $exercise;
 
-    // public function __construct()
-    // {
-    //     $this->exercise = new ArrayCollection();
-    // }
+    public function __construct()
+    {
+        $this->exercise = new ArrayCollection();
+    }
+
+    // #[ManyToOne(inversedBy: 'Category')]
+    // private Exercise $exercise;
 
     public function getId(): int
     {
@@ -90,30 +93,43 @@ class Category
         return $this;
     }
     
-    public function getUser(): User
-    {
-        return $this->user;
-    }
-    
-    public function setUser(User $user): Category
-    {
-        $user->addCategory($this);
-        $this->user = $user;
-
-        return $this;
-    }
-
-    // public function getExercise(): Collection
+    // public function getUser(): User
     // {
-    //     return $this->exercise;
+    //     return $this->user;
     // }
-
-    // public function addExercise(Exercise $exercise): Category
+    
+    // public function setUser(User $user): Category
     // {
-    //     $this->exercise->add($exercise);
+    //     $user->addCategory($this);
+    //     $this->user = $user;
 
     //     return $this;
     // }
+
+    // public function getExercise(): Exercise
+    // {
+    //     return  $this->exercise;
+    // }
+
+    // public function setExercise(Exercise $exercise): Category
+    // {
+    //     $exercise->addCategory($this);
+    //     $this->exercise = $exercise;
+
+    //     return $this;
+    // }
+
+    public function getExercise(): Collection
+    {
+        return $this->exercise;
+    }
+
+    public function addExercise(Exercise $exercise): Category
+    {
+        $this->exercise->add($exercise);
+
+        return $this;
+    }
     
     // public function getWorkoutPlans(): Collection
     // {

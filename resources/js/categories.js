@@ -6,21 +6,21 @@ window.addEventListener('DOMContentLoaded', function () {
     const editCategoryModal = new Modal(document.getElementById('editCategoryModal'))
     const newCategoryModal  = new Modal(document.getElementById('newCategoryModal'))
 
-    document.querySelector('.new-category-btn').addEventListener('click', function (event) {
-        openNewCategoryModal(newCategoryModal)
-    })
+    // document.querySelector('.new-category-btn').addEventListener('click', function (event) {
+    //     openNewCategoryModal(newCategoryModal)
+    // })
 
-    document.querySelector('.save-new-category-btn').addEventListener('click', function(event) {
-        post(`/categories`, {
-            name: newCategoryModal._element.querySelector('input[name="name"]').value
-        }, newCategoryModal._element).then(response => {
-            if (response.ok) {
-                table.draw()
-                document.getElementById('new-category-name').value = ''
-                newCategoryModal.hide()
-            }
-        })
-    })
+    // document.querySelector('.save-new-category-btn').addEventListener('click', function(event) {
+    //     post(`/categories`, {
+    //         name: newCategoryModal._element.querySelector('input[name="name"]').value
+    //     }, newCategoryModal._element).then(response => {
+    //         if (response.ok) {
+    //             table.draw()
+    //             document.getElementById('new-category-name').value = ''
+    //             newCategoryModal.hide()
+    //         }
+    //     })
+    // })
 
     const table = new DataTable('#categoriesTable', {
         serverSide: true,
@@ -93,8 +93,8 @@ function openEditCategoryModal(modal, {id, name}) {
     modal.show()
 }
 
-function openNewCategoryModal(modal) {
-    modal._element.querySelector('.new-category-btn')
+// function openNewCategoryModal(modal) {
+//     modal._element.querySelector('.new-category-btn')
 
-    modal.show()
-}
+//     modal.show()
+// }

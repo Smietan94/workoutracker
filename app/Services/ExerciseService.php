@@ -6,6 +6,7 @@ namespace App\Services;
 
 #region Use-Statements
 use App\DTO\ExerciseParams;
+use App\Entity\Category;
 use App\Entity\Exercise;
 use App\Entity\TrainingDay;
 use Doctrine\ORM\EntityManager;
@@ -27,7 +28,7 @@ class ExerciseService
         }
         return new ExerciseParams(
             $this->entityManager->find(TrainingDay::class, $data['trainingDayId']),
-            // null,
+            $this->entityManager->getRepository(Category::class)->findOneBy(['name' => $data['categoryName']]),
             $data['name'],
             \count($sets),
             $sets
@@ -41,6 +42,7 @@ class ExerciseService
         $exercise->setExerciseName($params->name);
         $exercise->setSetsNumber($params->setsNumber);
         $exercise->setTrainingDay($params->trainingDay);
+        $exercise->setCategory($params->category);
 
         $this->entityManager->persist($exercise);
         $this->entityManager->flush();

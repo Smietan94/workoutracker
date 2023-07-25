@@ -42,7 +42,7 @@ class CategoriesController
             $request->getParsedBody()
         );
 
-        $this->categoryService->create($data['name'], $request->getAttribute('user'));
+        // $this->categoryService->create($data['name']);
 
         return $response;
     }
@@ -82,7 +82,7 @@ class CategoriesController
             return $response->withStatus(404);
         }
 
-        $this->categoryService->update($category, $data['name']);
+        // $this->categoryService->update($category, $data['name']);
 
         return $response;
     }
