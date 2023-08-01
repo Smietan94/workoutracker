@@ -13,6 +13,7 @@ class ExerciseParams
         public readonly TrainingDay $trainingDay,
         public readonly Category $category,
         public readonly string $name,
+        public readonly string $description,
         public readonly int $setsNumber,
         public readonly array $sets,
     )

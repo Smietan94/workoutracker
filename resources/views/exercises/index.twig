@@ -1,0 +1,24 @@
+{% extends "layout.twig" %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('exercises')}}
+{% endblock %}
+
+{% block title %}Exercises{% endblock %}
+
+{% block content %}
+<div class="container content-body">
+    <div>
+        <table id="exercisesTable" width="100%">
+            <thead>
+            <tr>
+                <th>Exercise Name</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

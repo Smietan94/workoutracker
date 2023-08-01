@@ -7,8 +7,6 @@ namespace App\Services;
 #region Use-Statements
 use App\DTO\DataTableQueryParams;
 use App\Entity\Category;
-use App\Entity\Exercise;
-use App\Entity\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 #endregion
@@ -67,21 +65,10 @@ class CategoryService
     public function update(Category $category, string $name): Category
     {
         $category->setName($name);
-        // $category->addExercise($exercise);
 
         $this->entityManager->persist($category);
         $this->entityManager->flush();
 
         return $category;
     }
-
-    // public function addExercise(Category $category, Exercise $exercise): Category
-    // {
-    //     $category->addExercise($exercise);
-
-    //     $this->entityManager->persist($category);
-    //     $this->entityManager->flush();
-
-    //     return $category;
-    // }
 }

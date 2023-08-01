@@ -13,7 +13,6 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
 #endregion
@@ -30,17 +29,6 @@ class Category
     #[Column(unique: true)]
     private string $name;
 
-    // #[ManyToOne(inversedBy: 'categories')]
-    // private User $user;
-
-    // #[OneToMany(mappedBy: 'category', targetEntity: WorkoutPlan::class)]
-    // private Collection $workoutPlans;
-
-    // public function __construct()
-    // {
-    //     $this->workoutPlans = new ArrayCollection();
-    // }
-
     #[OneToMany(mappedBy: 'Category', targetEntity: Exercise::class)]
     private Collection $exercise;
 
@@ -48,9 +36,6 @@ class Category
     {
         $this->exercise = new ArrayCollection();
     }
-
-    // #[ManyToOne(inversedBy: 'Category')]
-    // private Exercise $exercise;
 
     public function getId(): int
     {
@@ -92,32 +77,6 @@ class Category
 
         return $this;
     }
-    
-    // public function getUser(): User
-    // {
-    //     return $this->user;
-    // }
-    
-    // public function setUser(User $user): Category
-    // {
-    //     $user->addCategory($this);
-    //     $this->user = $user;
-
-    //     return $this;
-    // }
-
-    // public function getExercise(): Exercise
-    // {
-    //     return  $this->exercise;
-    // }
-
-    // public function setExercise(Exercise $exercise): Category
-    // {
-    //     $exercise->addCategory($this);
-    //     $this->exercise = $exercise;
-
-    //     return $this;
-    // }
 
     public function getExercise(): Collection
     {
@@ -130,16 +89,4 @@ class Category
 
         return $this;
     }
-    
-    // public function getWorkoutPlans(): Collection
-    // {
-    //     return $this->workoutPlans;
-    // }
-    
-    // public function addWorkoutPlan(WorkoutPlan $workoutPlan): Category
-    // {
-    //     $this->workoutPlans->add($workoutPlan);
-
-    //     return $this;
-    // }
 }

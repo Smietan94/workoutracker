@@ -138,7 +138,6 @@ class WorkoutPlansController
 
     public function addExercise(Request $request, Response $response): Response
     {
-        // TODO ExerciseRequestValidator,
         $data = $this->requestValidatorFactory->make(RegisterExerciseRequestValidator::class)->validate(
             $request->getParsedBody()
         );

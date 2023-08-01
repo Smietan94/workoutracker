@@ -27,9 +27,6 @@ class TrainingDay
     #[Id, Column(options: ['unsigned' => true]), GeneratedValue]
     private int $id;
 
-    // #[Column(name: 'exercises_number')]
-    // private int $exercisesNumber;
-
     #[Column(nullable: true)]
     private string $description;
 
@@ -58,18 +55,6 @@ class TrainingDay
     {
         return $this->id;
     }
-
-    // public function getExercisesNumber(): int
-    // {
-    //     return $this->exercisesNumber;
-    // }
-
-    // public function setExercisesNumber(int $exercisesNumber): TrainingDay
-    // {
-    //     $this->exercisesNumber = $exercisesNumber;
-
-    //     return $this;
-    // }
 
     public function getDescription(): string
     {

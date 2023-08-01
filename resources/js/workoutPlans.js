@@ -197,10 +197,12 @@ function addExercise(modal, table, trainingDay) {
     const sets              = setsContainer.querySelectorAll('.sets-input')
     const nameInput         = modal._element.querySelector('input[name="name"]')
     const categoryNameInput = modal._element.querySelector('input[name="categoryName"]')
+    const descriptionInput  = modal._element.querySelector('input[name="description"]')
     const data              = new FormData()
 
     data['name']         = nameInput.value
     data['categoryName'] = categoryNameInput.value
+    data['description']  = descriptionInput.value
     data['trainingDay']  = trainingDay
     console.log(data)
 
@@ -213,7 +215,9 @@ function addExercise(modal, table, trainingDay) {
         if (response.ok) {
             table.draw()
             modal.hide()
-            nameInput.value = ''
+            nameInput.value         = ''
+            categoryNameInput.value = ''
+            descriptionInput.value  = ''
             setsContainer.innerHTML = ''
             addInput(setsContainer, 0)
             console.log(response)

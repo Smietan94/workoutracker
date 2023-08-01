@@ -18,7 +18,9 @@ class RegisterExerciseRequestValidator implements RequestValidatorInterface
 
         $fieldNames = \array_keys($data);
         $lengthMax = [];
-
+        \array_push($lengthMax, ['categoryName', 50]);
+        \array_push($lengthMax, ['description', 128]);
+        
         foreach($fieldNames as $key) {
             if (\preg_match('/set\d+/', $key)) {
                 \array_push($lengthMax, [$key, 2]);

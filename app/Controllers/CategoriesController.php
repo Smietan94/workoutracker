@@ -11,6 +11,7 @@ use App\RequestValidators\RegisterCategoryRequestValidator;
 use App\RequestValidators\UpdateCategoryRequestValidator;
 use App\ResponseFormatter;
 use App\Services\CategoryService;
+use App\Services\ExerciseService;
 use App\Services\RequestService;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -23,6 +24,7 @@ class CategoriesController
         private readonly Twig $twig,
         private readonly RequestValidatorFactoryInterface $requestValidatorFactory,
         private readonly CategoryService $categoryService,
+        private readonly ExerciseService $exerciseService,
         private readonly ResponseFormatter $responseFormatter,
         private readonly RequestService $requestService,
     ) {
@@ -42,7 +44,7 @@ class CategoriesController
             $request->getParsedBody()
         );
 
-        // $this->categoryService->create($data['name']);
+        $this->categoryService->create($data['name']);
 
         return $response;
     }
@@ -82,7 +84,7 @@ class CategoriesController
             return $response->withStatus(404);
         }
 
-        // $this->categoryService->update($category, $data['name']);
+        $this->categoryService->update($category, $data['name']);
 
         return $response;
     }
@@ -91,7 +93,7 @@ class CategoriesController
     {
         $params     = $this->requestService->getDataTableQueryParams($request);
         $categories = $this->categoryService->getPaginatedCategories($params);
-        
+
         $transformer = function (Category $category) {
             return [
                 'id'        => $category->getId(),
@@ -105,7 +107,7 @@ class CategoriesController
 
         return $this->responseFormatter->asDataTable(
             $response,
-            \array_map($transformer,(array) $categories->getIterator()),
+            \array_map($transformer, (array) $categories->getIterator()),
             $params->draw,
             $total,
             $total

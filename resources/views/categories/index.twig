@@ -9,11 +9,11 @@
 
 {% block content %}
     <div class="categories container content-body">
-        <div class="text-end mb-4">
-            {# <button type="button" class="btn btn-primary new-category-btn">
+        {# <div class="text-end mb-4">
+            <button type="button" class="btn btn-primary new-category-btn">
                 <i class="bi bi-plus-circle me-1"></i>
                 New Category
-            </button> #}
+            </button>
         </div>
         <div class="modal fade" id="newCategoryModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
@@ -43,7 +43,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> #}
         {% include 'categories/edit_category_modal.twig' %}
         <div>
             <table id="categoriesTable" width="100%">

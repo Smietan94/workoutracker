@@ -33,14 +33,14 @@ class Exercise
     #[Column(name: 'sets_number')]
     private int $setsNumber;
 
+    #[Column(nullable: true)]
+    private string $description;
+
     #[ManyToOne(inversedBy: 'exercises')]
     private TrainingDay $trainingDay;
 
     #[ManyToOne(inversedBy: 'exercises')]
     private Category $category;
-
-    // #[OneToMany(mappedBy: 'Exercise', targetEntity: Category::class)]
-    // private Collection $categories;
 
     #[OneToMany(mappedBy: 'Exercise', targetEntity: Set::class)]
     private Collection $sets;
@@ -50,7 +50,6 @@ class Exercise
 
     public function __construct()
     {
-        // $this->categories      = new ArrayCollection();
         $this->sets            = new ArrayCollection();
         $this->exerciseResults = new ArrayCollection();
     }
@@ -80,6 +79,18 @@ class Exercise
     public function setSetsNumber(int $setsNumber): Exercise
     {
         $this->setsNumber = $setsNumber;
+
+        return $this;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): Exercise
+    {
+        $this->description = $description;
 
         return $this;
     }
@@ -120,18 +131,6 @@ class Exercise
 
         return $this;
     }
-
-    // public function getCategories(): Collection
-    // {
-    //     return $this->categories;
-    // }
-
-    // public function addCategory(Category $category): Exercise
-    // {
-    //     $this->categories->add($category);
-
-    //     return $this;
-    // }
 
     public function getCategory(): Category
     {

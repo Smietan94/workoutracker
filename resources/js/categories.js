@@ -4,7 +4,7 @@ import DataTable          from "datatables.net"
 
 window.addEventListener('DOMContentLoaded', function () {
     const editCategoryModal = new Modal(document.getElementById('editCategoryModal'))
-    const newCategoryModal  = new Modal(document.getElementById('newCategoryModal'))
+    // const newCategoryModal  = new Modal(document.getElementById('newCategoryModal'))
 
     // document.querySelector('.new-category-btn').addEventListener('click', function (event) {
     //     openNewCategoryModal(newCategoryModal)
@@ -27,7 +27,10 @@ window.addEventListener('DOMContentLoaded', function () {
         ajax: '/categories/load',
         orderMulti: false,
         columns: [
-            {data: "name"},
+            // {data: "name"},
+            {data: row => `
+                <a href="/exercises/${ row.id }">${ row.name }</a>
+            `},
             {data: "createdAt"},
             {data: "updatedAt"},
             {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 #region Use-Statements
 use App\Controllers\AuthController;
 use App\Controllers\CategoriesController;
+use App\Controllers\ExerciseController;
 use App\Controllers\HomeController;
 use App\Controllers\WorkoutPlansController;
 use App\Middleware\AuthMiddleware;
@@ -43,5 +44,11 @@ return function (App $app) {
         $workoutPlans->post('/{id:[0-9]+}', [WorkoutPlansController::class, 'update']);
         $workoutPlans->post('/addexercise', [WorkoutPlansController::class, 'addExercise']);
         $workoutPlans->get('/getTPW', [WorkoutPlansController::class, 'getTrainingsPerWeek']);
+    })->add(AuthMiddleware::class);
+
+    $app->group('/exercises', function (RouteCollectorProxy $exercises) {
+        // $exercises->get('/all', [ExerciseController::class, 'all']);
+        $exercises->get('/{id:all|[0-9]+}', [ExerciseController::class, 'index']);
+        $exercises->get('/load/{id:all|[0-9]+}', [ExerciseController::class, 'load']);
     })->add(AuthMiddleware::class);
 };
