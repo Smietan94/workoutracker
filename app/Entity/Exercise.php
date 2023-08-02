@@ -42,10 +42,10 @@ class Exercise
     #[ManyToOne(inversedBy: 'exercises')]
     private Category $category;
 
-    #[OneToMany(mappedBy: 'Exercise', targetEntity: Set::class)]
+    #[OneToMany(mappedBy: 'exercise', targetEntity: Set::class, cascade: ['remove'])]
     private Collection $sets;
 
-    #[OneToMany(mappedBy: 'Exercise', targetEntity: ExerciseResult::class)]
+    #[OneToMany(mappedBy: 'exercise', targetEntity: ExerciseResult::class)]
     private Collection $exerciseResults;
 
     public function __construct()

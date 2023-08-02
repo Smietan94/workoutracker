@@ -8,6 +8,7 @@ namespace App\Services;
 use App\DTO\DataTableQueryParams;
 use App\DTO\WorkoutPlanParams;
 use App\Entity\Exercise;
+use App\Entity\Set;
 use App\Entity\TrainingDay;
 use App\Entity\User;
 use App\Entity\WorkoutPlan;
@@ -87,15 +88,9 @@ class WorkoutPlanService
     public function delete(int $id): void
     {
         $workoutPlan  = $this->entityManager->find(WorkoutPlan::class, $id);
-        $trainingDays = $this->entityManager->getRepository(TrainingDay::class)->findBy(['workoutPlan' => $workoutPlan]);
 
-        // TODO refactor this
-        foreach($trainingDays as $tD) {
-            $exercises = $this->entityManager->getRepository(Exercise::class)->findBy(['trainingDay' => $tD]);
-            foreach($exercises as $exercise) {
-                $this->entityManager->remove($exercise);
-            }
-            $this->entityManager->remove($tD);
+        if (! $workoutPlan) {
+            throw new \InvalidArgumentException("Workout Plan with ID " . $id . " does not exists.");
         }
 
         $this->entityManager->remove($workoutPlan);

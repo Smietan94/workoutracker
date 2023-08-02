@@ -15,6 +15,7 @@ use App\ResponseFormatter;
 use App\Services\CategoryService;
 use App\Services\ExerciseService;
 use App\Services\RequestService;
+use App\Services\SetService;
 use App\Services\TrainingDayService;
 use App\Services\WorkoutPlanService;
 use Slim\Views\Twig;
@@ -31,6 +32,7 @@ class WorkoutPlansController
         private readonly WorkoutPlanService $workoutPlanService,
         private readonly TrainingDayService $trainingDayService,
         private readonly ExerciseService $exerciseService,
+        private readonly SetService $setService,
         private readonly ResponseFormatter $responseFormatter, 
         private readonly RequestService $requestService,
         private readonly SessionInterface $session,
@@ -153,8 +155,9 @@ class WorkoutPlansController
             $this->categoryService->create($data['categoryName']);
         } 
 
-        $params = $this->exerciseService->getExerciseParams(($data + ['trainingDayId' => $trainingDays[$trainingDay]->getId()]));
-        $this->exerciseService->storeExercise($params);
+        $params   = $this->exerciseService->getExerciseParams(($data + ['trainingDayId' => $trainingDays[$trainingDay]->getId()]));
+        $exercise = $this->exerciseService->storeExercise($params);
+        $this->setService->storeSets($params, $exercise);
 
         return $response;
     }

@@ -31,7 +31,7 @@ class Set
     private int $reps;
 
     #[ManyToOne(inversedBy: 'sets')]
-    private Exercise $execise;
+    private Exercise $exercise;
 
     public function getId(): int
     {
@@ -86,15 +86,15 @@ class Set
         return $this;
     }
     
-    public function getExecise(): Exercise
+    public function getExercise(): Exercise
     {
-        return $this->execise;
+        return $this->exercise;
     }
     
-    public function setExecise(Exercise $execise): Set
+    public function setExercise(Exercise $exercise): Set
     {
-        $execise->addSet($this);
-        $this->execise = $execise;
+        $exercise->addSet($this);
+        $this->exercise = $exercise;
 
         return $this;
     }
