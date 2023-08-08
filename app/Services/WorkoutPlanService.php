@@ -7,9 +7,6 @@ namespace App\Services;
 #region Use-Statements
 use App\DTO\DataTableQueryParams;
 use App\DTO\WorkoutPlanParams;
-use App\Entity\Exercise;
-use App\Entity\Set;
-use App\Entity\TrainingDay;
 use App\Entity\User;
 use App\Entity\WorkoutPlan;
 use Doctrine\ORM\EntityManager;

@@ -14,6 +14,6 @@ class SessionOptions
         public readonly bool $secure,
         public readonly bool $httponly,
         public readonly SameSite $samesite,
-    ){
+    ) {
     }
 }

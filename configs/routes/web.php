@@ -7,6 +7,7 @@ use App\Controllers\AuthController;
 use App\Controllers\CategoriesController;
 use App\Controllers\ExerciseController;
 use App\Controllers\HomeController;
+use App\Controllers\TrainingPlanController;
 use App\Controllers\WorkoutPlansController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\GuestMiddleware;
@@ -47,8 +48,12 @@ return function (App $app) {
     })->add(AuthMiddleware::class);
 
     $app->group('/exercises', function (RouteCollectorProxy $exercises) {
-        // $exercises->get('/all', [ExerciseController::class, 'all']);
         $exercises->get('/{id:all|[0-9]+}', [ExerciseController::class, 'index']);
         $exercises->get('/load/{id:all|[0-9]+}', [ExerciseController::class, 'load']);
     })->add(AuthMiddleware::class);
+
+    $app->group('/trainingPlan', function (RouteCollectorProxy $trainingPlan) {
+        $trainingPlan->get('/{id:[0-9]+}', [TrainingPlanController::class, 'index']);
+        $trainingPlan->get('/load', [TrainingPlanController::class, 'load']);
+    });
 };

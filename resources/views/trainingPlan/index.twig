@@ -1,0 +1,54 @@
+{% extends "layout.twig" %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('trainingPlan') }}
+{% endblock %}
+
+{% block title %}Training Plan{% endblock %}
+
+{% block content %}
+    <div class="container content-body">
+        <div id="workoutPlanNameContainer">
+            <h5 class="text-center">Workout Plan Name: {{ workoutName }}</h5>
+        </div>
+        <div id="trainingDaysBtnContainer">
+            {% for i in 0 .. (trainingsPerWeek - 1) %}
+                <button class="btn btn-primary btn-block w-100 mt-3">
+                    <h6 class="mt-2">Training Day {{ (i + 1) }}</h6>
+                </button>
+                <div id="TrainingDayContainer{{ data[i]['id'] }}">
+                    <table class="table table-success table-striped table-hover" id="trainingDayTable{{ data[i]['id'] }}">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Exercise Name</th>
+                                <th>Description</th>
+                                <th>Sets</th>
+                                <th>Created At</th>
+                                <th>Updated At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for exercise in data[i]['exercises'] %}
+                                {% set index = loop.index %}
+                                <tr>
+                                    <td>{{ index }}</td>
+                                    <td>{{ exercise['exerciseName'] }}</td>
+                                    <td>{{ exercise['description'] | default('No description added') }}</td>
+                                    <td>
+                                        {% for set in exercise['sets'] %}
+                                            {{ set['reps'] }}
+                                        {% endfor %}
+                                    </td>
+                                    <td>{{ exercise['createdAt'] }}</td>
+                                    <td>{{ exercise['updatedAt'] }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

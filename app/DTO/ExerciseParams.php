@@ -16,7 +16,6 @@ class ExerciseParams
         public readonly string $description,
         public readonly int $setsNumber,
         public readonly array $sets,
-    )
-    {
+    ) {
     }
 }

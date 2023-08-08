@@ -25,6 +25,7 @@ Encore
     .addEntry("workoutPlans", "./resources/js/workoutPlans.js")
     .addEntry("auth", "./resources/js/auth.js")
     .addEntry("exercises", "./resources/js/exercises.js")
+    .addEntry("trainingPlan", "./resources/js/trainingPlan.js")
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()

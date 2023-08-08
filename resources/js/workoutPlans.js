@@ -30,18 +30,18 @@ window.addEventListener('DOMContentLoaded', function() {
                 newWorkoutPlanModal.hide()
                 addExerciseModal.show()
             }
+            if (trainingsPerWeek - 1 == trainingDay) {
+                document.getElementById('save-training-day-btn').innerHTML = `
+                    <i class="bi bi-save me-1"></i>
+                    Finish
+                `
+            } else {
+                document.getElementById('save-training-day-btn').innerHTML = `
+                    <i class="bi bi-calendar-plus me-1"></i>
+                    Next Training Day
+                `
+            }
         })
-        if (trainingsPerWeek - 1 == trainingDay) {
-            document.getElementById('save-training-day-btn').innerHTML = `
-                <i class="bi bi-save me-1"></i>
-                Finish
-            `
-        } else {
-            document.getElementById('save-training-day-btn').innerHTML = `
-                <i class="bi bi-calendar-plus me-1"></i>
-                Next Training Day
-            `
-        }
     })
 
     const table = new DataTable('#workoutPlansTable', {
@@ -49,7 +49,9 @@ window.addEventListener('DOMContentLoaded', function() {
         ajax: '/workoutplans/load',
         orderMulti: false,
         columns: [
-            {data: "name"},
+            {data: row => `
+                <a href="/trainingPlan/${ row.id }">${ row.name }</a>
+            `},
             {data: "notes"},
             {data: "trainingsPerWeek"},
             {data: "createdAt"},
@@ -123,11 +125,18 @@ window.addEventListener('DOMContentLoaded', function() {
 
     document.querySelector('.next-training-day-btn').addEventListener('click', function(event) {
         addExercise(addExerciseModal, table, trainingDay++)
-        if (trainingsPerWeek > trainingDay) {
+        if (trainingsPerWeek - 1 == trainingDay) {
             setTimeout(() => {
                 document.getElementById('save-training-day-btn').innerHTML = `
                     <i class="bi bi-save me-1"></i>
                     Finish
+                `
+            }, 500)
+        } else if (trainingsPerWeek > trainingDay) {
+            setTimeout(() => {
+                document.getElementById('save-training-day-btn').innerHTML = `
+                    <i class="bi bi-calendar-plus me-1"></i>
+                    Next Training Day
                 `
             }, 500)
             setTimeout(() => {

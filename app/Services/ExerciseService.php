@@ -88,7 +88,7 @@ class ExerciseService
         $orderDir = \strtolower($params->orderDir) === 'asc' ? 'asc' : 'desc';
 
         if (! empty($params->searchTerm)) {
-            $query->where('e.name LIKE :name')->setParameter('name', '%' . \addcslashes($params->searchTerm, '%_') . '%');
+            $query->where('e.exerciseName LIKE :exerciseName')->setParameter('exerciseName', '%' . \addcslashes($params->searchTerm, '%_') . '%');
         }
 
         $query->orderBy('e.' . $orderBy, $orderDir);
