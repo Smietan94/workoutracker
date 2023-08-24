@@ -8,7 +8,7 @@
 }
 
 body {
-  background-color: #9BA4B5;
+  background-color: #272829;
 }
 
 svg.icon {
@@ -17,21 +17,28 @@ svg.icon {
 }
 
 .nav-link {
-  color: #F1F6F9;
+  color: #FFF6E0;
 
   &.active {
     background-color: inherit !important;
-    color: #F1F6F9 !important;
+    color: #D8D9DA !important;
   }
 
   &:hover, &:focus {
-    color: #212A3E !important;
+    color: #D8D9DA !important;
   }
 }
 
+.text-title {
+  color: #D8D9DA;
+}
+
 .content-body {
-  background-color: #F1F6F9;
+  background-color: #D8D9DA;
   min-height: 500px;
   padding: 20px 25px 25px;
 }
  
+.table-hidden {
+  display: none;
+}

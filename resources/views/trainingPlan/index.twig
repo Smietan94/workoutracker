@@ -8,17 +8,25 @@
 {% block title %}Training Plan{% endblock %}
 
 {% block content %}
-    <div class="container content-body">
+    <div class="trainingPlan container content-body">
         <div id="workoutPlanNameContainer">
-            <h5 class="text-center">Workout Plan Name: {{ workoutName }}</h5>
+            <div class="row">
+                <div class="col">
+                    <h3 class="text-start text-dark text-bold mt-2">Workout Plan Name: {{ workoutName }}</h5>
+                </div>
+                <div class="col text-end">
+                    <a class="btn btn-dark btn block w-50 mt-2" href="/trainingPlan/editWorkout/{{ workoutPlanId }}" role="button">Edit Workout Plan</a>
+                </div>
+            </div>
         </div>
         <div id="trainingDaysBtnContainer">
             {% for i in 0 .. (trainingsPerWeek - 1) %}
-                <button class="btn btn-primary btn-block w-100 mt-3">
+                <button type="button" class="btn btn-dark btn-block w-100 mt-3 training-day-btn"
+                        data-target="trainingPlanTable{{ data[i]['id'] }}">
                     <h6 class="mt-2">Training Day {{ (i + 1) }}</h6>
                 </button>
                 <div id="TrainingDayContainer{{ data[i]['id'] }}">
-                    <table class="table table-success table-striped table-hover" id="trainingDayTable{{ data[i]['id'] }}">
+                    <table class="table table-secondary table-striped table-hover table-hidden mt-3" id="trainingPlanTable{{ data[i]['id'] }}">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -37,14 +45,19 @@
                                     <td>{{ exercise['exerciseName'] }}</td>
                                     <td>{{ exercise['description'] | default('No description added') }}</td>
                                     <td>
-                                        {% for set in exercise['sets'] %}
-                                            {{ set['reps'] }}
+                                        {% for set_ in exercise['sets'] %}
+                                            {{ set_['reps'] }}
                                         {% endfor %}
                                     </td>
                                     <td>{{ exercise['createdAt'] }}</td>
                                     <td>{{ exercise['updatedAt'] }}</td>
                                 </tr>
                             {% endfor %}
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    <a class="btn btn-dark btn block w-50" href="recordWorkout/{{ data[i]['id'] }}" role="button">Record Workout</a>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

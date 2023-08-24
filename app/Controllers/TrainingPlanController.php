@@ -6,6 +6,7 @@ namespace App\Controllers;
 
 #region Use-Statements
 use App\Contracts\RequestValidatorFactoryInterface;
+use App\RequestValidators\UpdateTrainingPlanRequestValidator;
 use App\ResponseFormatter;
 use App\Services\RequestService;
 use App\Services\TrainingPlanService;
@@ -19,7 +20,7 @@ class TrainingPlanController
 {
     public function __construct(
         private readonly Twig $twig,
-        private readonly RequestValidatorFactoryInterface $requestValidator,
+        private readonly RequestValidatorFactoryInterface $requestValidatorFactory,
         private readonly ResponseFormatter $responseFormatter,
         private readonly RequestService $requestService,
         private readonly WorkoutPlanService $workoutPlanService,
@@ -30,17 +31,7 @@ class TrainingPlanController
     public function index(Request $request, Response $response, array $args): Response
     {
         $workoutPlanId  = (int) $args['id'];
-        $workoutPlan    = $this->workoutPlanService->getById($workoutPlanId);
-        $trainingParams = $this->trainingPlanService->getTrainingPlanParams($workoutPlan);
-
-        echo '<pre>';
-
-        echo '</pre>';
-        $data = [
-            'workoutName'      => $trainingParams->workoutName,
-            'trainingsPerWeek' => $trainingParams->trainingsPerWeek,
-            'data'             => $trainingParams->data,
-        ];
+        $data           = $this->trainingPlanService->getTrainingPlanData($workoutPlanId);
         
         return $this->twig->render(
             $response,
@@ -52,5 +43,39 @@ class TrainingPlanController
     public function load(Request $request, Response $response): Response
     {
         return $response;
+    }
+
+    public function editTrainingPlan(Request $request, Response $response, array $args): Response
+    {
+        $workoutPlanId = (int) $args['id'];
+        $data          = $this->trainingPlanService->getTrainingPlanData($workoutPlanId);
+
+        return $this->twig->render(
+            $response,
+            'trainingPlan/edit.twig',
+            $data
+        );
+    }
+
+    public function updateTrainingPlan(Request $request, Response $response, array $args): Response
+    {
+        $dataToUpdate = $this->requestValidatorFactory->make(UpdateTrainingPlanRequestValidator::class)->validate(
+            $request->getParsedBody()
+        );
+
+        echo '<pre style="background:white">';
+        \print_r($dataToUpdate);
+        echo '</pre>';
+
+        $this->trainingPlanService->update($dataToUpdate);
+
+        $workoutPlanId  = (int) $args['id'];
+        $data           = $this->trainingPlanService->getTrainingPlanData($workoutPlanId);
+
+        return $this->twig->render(
+            $response,
+            'trainingPlan/index.twig',
+            $data
+        );
     }
 }

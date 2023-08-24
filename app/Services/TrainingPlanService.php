@@ -5,18 +5,144 @@ declare(strict_types=1);
 namespace App\Services;
 
 #region Use-Statements
+use App\DTO\ExerciseParams;
 use App\DTO\TrainingPlanParams;
+use App\Entity\Category;
+use App\Entity\Exercise;
+use App\Entity\TrainingDay;
 use App\Entity\WorkoutPlan;
+use Doctrine\ORM\EntityManager;
 #endregion 
 
 class TrainingPlanService
 {
     public function __construct(
         private readonly WorkoutPlanService $workoutPlanService,
+        private readonly CategoryService $categoryService,
+        private readonly SetService $setService,
+        private readonly ExerciseService $exerciseService,
+        private readonly EntityManager $entityManager
     ) {
     }
 
-    public function getTrainingPlanParams(WorkoutPlan $workoutPlan): TrainingPlanParams
+    public function getTrainingPlanData(int $workoutPlanId): array
+    {
+        $workoutPlan    = $this->workoutPlanService->getById($workoutPlanId);
+        $trainingParams = $this->getTrainingPlanParams($workoutPlan);
+
+        $data = [
+            'workoutName'      => $trainingParams->workoutName,
+            'trainingsPerWeek' => $trainingParams->trainingsPerWeek,
+            'workoutPlanId'    => $workoutPlan->getId(),
+            'data'             => $trainingParams->data,
+        ];
+
+        return $data;
+    }
+
+    public function update(array $data): void
+    {
+        $workoutPlan = $this->workoutPlanService->getById((int) $data['workoutPlanId']);
+
+        $trainingDays = (array) $workoutPlan->getTrainingDays()->getIterator();
+
+        for ($i = 0; $i < \count($data['trainingDays']); $i++) {
+            $exercises = $this->getExercisesDTOArray(
+                $data['trainingDays'][$i]['exercises'], 
+                (int) $data['trainingDays'][$i]['trainingDayId']
+            );
+            $this->processTrainingDay($trainingDays[$i], $exercises);
+        }
+    }
+
+    private function getExercisesDTOArray(array $exercises, int $trainingDayId): array
+    {
+        $exercisesDTOArray = [];
+        foreach ($exercises as $exercise) {
+            \array_push(
+                $exercisesDTOArray,
+                new ExerciseParams(
+                    $trainingDayId,
+                    $exercise['category'],
+                    $exercise['exerciseName'],
+                    $exercise['description'],
+                    \count($exercise['sets']),
+                    $exercise['sets']
+                )
+            );
+        }
+        return $exercisesDTOArray;
+    }
+
+    private function processTrainingDay(TrainingDay $trainingDay, array $exercises): void
+    {
+        $exercisesToUpdate = (array) $trainingDay->getExercises()->getIterator();
+
+        if (\count($exercises) > \count($exercisesToUpdate)) {
+            // TODO add exercises
+        } elseif (\count($exercises) < \count($exercisesToUpdate)) {
+            // TODO remove exercises
+            $exercisesToUpdate = (array) $trainingDay->getExercises()->getIterator();
+        } 
+
+        for ($i = 0; $i < \count($exercisesToUpdate); $i++) {
+            $this->processExercise($exercisesToUpdate[$i], $exercises[$i]);
+        } 
+    }
+
+    private function processExercise(Exercise $exercise, ExerciseParams $exerciseParams): Exercise 
+    {
+        $sets = (array) $exercise->getSets()->getIterator();
+
+        if ($exercise->getExerciseName() !== $exerciseParams->name) {
+            $exercise->setExerciseName($exerciseParams->name);
+        }
+
+        if ($exercise->getDescription() !== $exerciseParams->description) {
+            $exercise->setDescription($exerciseParams->description);
+        }
+
+        if ($exercise->getCategory()->getName() !== $exerciseParams->category) {
+            $category = $this->processCategory($exerciseParams->category);
+            $exercise->setCategory($category);
+        }
+
+        if ($exerciseParams->setsNumber > \count($sets)) {
+            $setsToAdd = \array_slice($exerciseParams->sets, \count($sets));
+            $paramsToAdd = new ExerciseParams(
+                $exerciseParams->trainingDay,
+                $exerciseParams->category,
+                $exerciseParams->name,
+                $exerciseParams->description,
+                \count($setsToAdd),
+                $setsToAdd
+            );
+            $this->setService->storeSets($paramsToAdd, $exercise);
+        } elseif ($exerciseParams->setsNumber < count($sets)) {
+            $setsToRemove = \array_slice($sets, \count($exerciseParams->sets));
+            foreach ($setsToRemove as $setToRemove) {
+                $this->entityManager->remove($setToRemove);
+            }
+        }
+
+        $this->entityManager->persist($exercise);
+        $this->entityManager->flush();
+
+        return $exercise;
+    }
+
+    private function processCategory(string $categoryName): Category
+    {
+        $category = $this->categoryService->getByName($categoryName);
+
+        if (! $category) {
+            $category = $this->categoryService->create($categoryName);
+        }
+
+        return $category;
+    }
+
+    private function getTrainingPlanParams(WorkoutPlan $workoutPlan): TrainingPlanParams
     {
         $trainingDaysArray = (array) $workoutPlan->getTrainingDays()->getIterator();
         $data = $this->getTrainingDaysDataArray($trainingDaysArray);

@@ -10,8 +10,8 @@ use App\Entity\TrainingDay;
 class ExerciseParams
 {
     public function __construct(
-        public readonly TrainingDay $trainingDay,
-        public readonly Category $category,
+        public readonly TrainingDay|int $trainingDay,
+        public readonly Category|string $category,
         public readonly string $name,
         public readonly string $description,
         public readonly int $setsNumber,

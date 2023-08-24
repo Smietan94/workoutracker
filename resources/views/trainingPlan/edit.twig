@@ -1,0 +1,123 @@
+{% extends "layout.twig" %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('editTrainingPlan') }}
+{% endblock %}
+
+{% block title %}Training Plan{% endblock %}
+
+{% block content %}
+    <div class="container content-body">
+        {% if errors %}
+            <div class='alert alert-danger text-bold text-center'>
+                {{ errors['trainingDays.*.exercises.*.exerciseName'] | first }}<br>
+                {{ errors['trainingDays.*.exercises.*.description'] | first }}<br>
+                {{ errors['trainingDays.*.exercises.*.category'] | first }}<br>
+                {{ errors['trainingDays.*.exercises.*.sets.*'] | first }}<br>
+            </div>
+        {% endif %}
+        <form  action="/trainingPlan/{{ workoutPlanId }}" method="post">
+            <input type="hidden" name="workoutPlanId" value="{{ workoutPlanId }}">
+            {{ csrf.fields | raw }}
+            {% for i in 0 .. (trainingsPerWeek - 1) %}
+                {% set trainingDay = loop.index %}
+                <input type="hidden" name="trainingDays[{{ trainingDay - 1 }}][trainingDayId]" value="{{ data[i]['id'] }}">
+                <button type="button" class="btn btn-dark btn-block w-100 mt-3 training-day-btn"
+                        data-target="trainingPlanTable{{ data[i]['id'] }}">
+                    <h6 class="mt-2">Training Day {{ (i + 1) }}</h6>
+                </button>
+                <table class="table table-secondary table-striped table-hover table-hidden mt-3" id="trainingPlanTable{{ data[i]['id'] }}">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Exercise Name</th>
+                            <th>Description</th>
+                            <th>Sets</th>
+                            <th>Category</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trainingDayTBody{{ trainingDay - 1 }}" data-training-day-index="{{ trainingDay - 1 }}">
+                        {% for exercise in data[i]['exercises'] %}
+                            {% set exerciseIndex = loop.index %}
+                            <tr data-exercise-id="exercise{{ trainingDay - 1 }}{{ exerciseIndex - 1}}" class="exercise-row">
+                                <input id="exerciseId" type="hidden" name="trainingDays[{{ trainingDay - 1 }}][exercises][{{ exerciseIndex - 1 }}][exerciseId]" value="{{ exercise['id'] }}">
+
+                                <td id="indexCell">{{ exerciseIndex }}</td>
+
+                                <td id="nameCell">
+                                    <input name="trainingDays[{{ trainingDay - 1 }}][exercises][{{ exerciseIndex - 1 }}][exerciseName]" 
+                                           type="text" class="form-control mt-1" 
+                                           value="{{ exercise['exerciseName'] }}">
+                                </td>
+
+                                <td id="descriptionCell">
+                                    <input name="trainingDays[{{ trainingDay - 1 }}][exercises][{{ exerciseIndex - 1 }}][description]" 
+                                           type="text" class="form-control mt-1" 
+                                           value="{{ exercise['description'] }}">
+                                </td>
+
+                                <td id="setsCell">
+                                    <div id="setsContainer{{ trainingDay - 1 }}{{ exerciseIndex - 1 }}" class="sets-container">
+                                        {% for set_ in exercise['sets'] %}
+                                            {% set setIndex = loop.index %}
+                                            <div class="set-input-div">
+                                                <input name="trainingDays[{{ trainingDay - 1 }}][exercises][{{ exerciseIndex - 1 }}][sets][set{{ setIndex - 1 }}]" 
+                                                       type="number" class="sets-input form-control mt-1" 
+                                                       placeholder="Reps"
+                                                       value="{{ set_['reps'] }}" min="0">
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="row mt-1">
+                                        <div class="col">
+                                            <button type="button" class="w-100 btn btn-dark add-set-btn mt-1"
+                                                value="{{ trainingDay - 1 }}{{ exerciseIndex - 1 }}"
+                                                data-training-day-index="{{ trainingDay - 1 }}"
+                                                data-exercise-index="{{ exerciseIndex - 1 }}">
+                                                <i class="bi bi-plus-circle me-1"></i>
+                                            </button>
+                                        </div>
+                                        <div class="col">
+                                            <button type="button" class="w-100 btn btn-dark remove-set-btn mt-1"
+                                                value="{{ trainingDay - 1 }}{{ exerciseIndex - 1 }}">
+                                                <i class="bi bi-dash-circle me-1"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td id="categoryCell">
+                                    <input name="trainingDays[{{ trainingDay - 1 }}][exercises][{{ exerciseIndex - 1 }}][category]" 
+                                           type="text" class="form-control mt-1" 
+                                           value="{{ exercise['categoryName'] }}">
+                                </td>
+
+                                <td id="actionCell" class="text-center">
+                                    <button type="button" class="btn btn-dark remove-exercise-btn mt-1"
+                                            value="{{ trainingDay - 1 }}{{ exerciseIndex - 1 }}">
+                                        <i class="bi bi-trash3-fill"></i>
+                                    </button>
+                                </td>
+
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                <button type="button" class="btn btn-dark add-exercise-btn mt-1 w-100"
+                                        data-training-day-index="{{ trainingDay - 1 }}">
+                                    <i class="bi bi-plus-circle"></i>
+                                    Add Exercise
+                                </button>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            {% endfor %}
+            <input method="post" type="submit" class="btn btn-dark mt-3" value="Update Workout Plan">
+        </form>
+    </div>
+{% endblock %}

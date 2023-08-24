@@ -155,6 +155,8 @@ window.addEventListener('DOMContentLoaded', function() {
             let lastInputDiv = setsInputs[setsInputs.length - 1]
             lastInputDiv.remove()
             setCounter-- 
+        } else {
+            alert('Atleast one set required')
         }
     })
 })
