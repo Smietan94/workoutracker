@@ -13,12 +13,18 @@ use App\Entity\TrainingDay;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use InvalidArgumentException;
+
 #endregion
 
 class ExerciseService
 {
-    public function __construct(private readonly EntityManager $entityManager)
-    {
+    public function __construct(
+        private readonly EntityManager $entityManager,
+        private readonly TrainingDayService $trainingDayService,
+        private readonly CategoryService $categoryService,
+        private readonly SetService $setService
+    ) {
     }
 
     public function getExerciseParams(array $data): ExerciseParams
@@ -29,6 +35,7 @@ class ExerciseService
                 \array_push($sets, $data[$key]);
             }
         }
+
         return new ExerciseParams(
             $this->entityManager->find(TrainingDay::class, $data['trainingDayId']),
             $this->entityManager->getRepository(Category::class)->findOneBy(['name' => $data['categoryName']]),
@@ -39,18 +46,34 @@ class ExerciseService
         );
     }
 
+    public function getById(int $id): Exercise
+    {
+        return $this->entityManager->find(Exercise::class, $id);
+    }
+
+    public function removeExercises(array $exercisesIds): void
+    {
+        $exercises = \array_map(fn($exerciseId) => $this->getById($exerciseId), $exercisesIds);
+        foreach($exercises as $exercise) {
+            $this->entityManager->remove($exercise);
+        }
+        $this->entityManager->flush();
+    }
+
     public function storeExercise(ExerciseParams $params): Exercise
     {
         $exercise = new Exercise();
 
         $exercise->setExerciseName($params->name);
         $exercise->setSetsNumber($params->setsNumber);
-        $exercise->setTrainingDay($params->trainingDay);
-        $exercise->setCategory($params->category);
+        $exercise->setTrainingDay($this->checkTrainingDay($params->trainingDay));
+        $exercise->setCategory($this->checkCategory($params->category));
         $exercise->setDescription($params->description);
 
         $this->entityManager->persist($exercise);
         $this->entityManager->flush();
+
+        $this->setService->storeSets($params, $exercise);
 
         return $exercise;
     }
@@ -80,6 +103,32 @@ class ExerciseService
             ->setMaxResults($params->length);
 
         return $this->sort($query, $params);
+    }
+
+    private function checkCategory(mixed $category): Category
+    {
+        if (\is_string($category)) {
+            $newCategory = $this->categoryService->getByName($category);
+            if (!$newCategory) {
+                $newCategory = $this->categoryService->create($category);
+            }
+            return $newCategory;
+        } else if ($category instanceof Category) {
+            return $category;
+        } else {
+            throw new InvalidArgumentException($category . " is not instance of string or Category");
+        }
+    }
+
+    private function checkTrainingDay(mixed $trainingDay): TrainingDay
+    {
+        if (\is_int($trainingDay)) {
+            return $this->trainingDayService->getById($trainingDay);
+        } else if ($trainingDay instanceof TrainingDay) {
+            return $trainingDay;
+        } else {
+            throw new InvalidArgumentException($trainingDay . " is not instance of integer or TrainingDay");
+        }
     }
 
     private function sort(QueryBuilder $query, DataTableQueryParams $params): Paginator

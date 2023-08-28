@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+#region Use-Statements
 use App\DTO\ExerciseParams;
 use App\Entity\Exercise;
 use App\Entity\Set;
 use Doctrine\ORM\EntityManager;
+#endregion
 
 class SetService
 {

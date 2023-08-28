@@ -59,18 +59,35 @@ class TrainingPlanService
     {
         $exercisesDTOArray = [];
         foreach ($exercises as $exercise) {
-            \array_push(
-                $exercisesDTOArray,
-                new ExerciseParams(
-                    $trainingDayId,
-                    $exercise['category'],
-                    $exercise['exerciseName'],
-                    $exercise['description'],
-                    \count($exercise['sets']),
-                    $exercise['sets']
-                )
-            );
+            if (isset($exercise['exerciseId'])) {
+                \array_push(
+                    $exercisesDTOArray,
+                    new ExerciseParams(
+                        $trainingDayId,
+                        $exercise['category'],
+                        $exercise['exerciseName'],
+                        $exercise['description'],
+                        \count($exercise['sets']),
+                        $exercise['sets'], 
+                        (int) $exercise['exerciseId']
+                    )
+                );
+            } else {
+                \array_push(
+                    $exercisesDTOArray,
+                    new ExerciseParams(
+                        $trainingDayId,
+                        $exercise['category'],
+                        $exercise['exerciseName'],
+                        $exercise['description'],
+                        \count($exercise['sets']),
+                        $exercise['sets'], 
+                        null
+                    )
+                );
+            }
         }
+
         return $exercisesDTOArray;
     }
 
@@ -79,15 +96,51 @@ class TrainingPlanService
         $exercisesToUpdate = (array) $trainingDay->getExercises()->getIterator();
 
         if (\count($exercises) > \count($exercisesToUpdate)) {
-            // TODO add exercises
+            $newExercises = $this->getNewExercises($exercises);
+            foreach($newExercises as $exercise) {
+                $this->exerciseService->storeExercise($exercise);
+            }
         } elseif (\count($exercises) < \count($exercisesToUpdate)) {
-            // TODO remove exercises
-            $exercisesToUpdate = (array) $trainingDay->getExercises()->getIterator();
-        } 
+            $exercisesToRemove = $this->getExercisesToRemove($exercises, $exercisesToUpdate);
+            $this->exerciseService->removeExercises($exercisesToRemove);
+        }
+
+        $exercisesToUpdate = (array) $trainingDay->getExercises()->getIterator();
 
         for ($i = 0; $i < \count($exercisesToUpdate); $i++) {
             $this->processExercise($exercisesToUpdate[$i], $exercises[$i]);
-        } 
+        }
+    }
+
+    private function getExercisesToRemove(array $exercises, array $exercisesFromDB): array{
+        $exercisesIdsToRemove        = [];
+        $obtainedExercisesIdsToCheck = \array_map(fn($exercise)=>$exercise->id, $exercises);
+
+        foreach ($exercisesFromDB as $exercise) {
+            $exerciseId = $exercise->getId();
+            if (! \in_array($exerciseId, $obtainedExercisesIdsToCheck)) {
+                \array_push($exercisesIdsToRemove, $exerciseId);
+            }
+        }
+
+        // echo '<pre style="background:white">';
+        // \print_r($exercisesIdsToRemove);
+        // echo '</pre>';
+
+        return $exercisesIdsToRemove;
+    }
+
+    private function getNewExercises(array $exercises): array
+    {
+        $newExercises = [];
+
+        foreach($exercises as $exercise) {
+            if ($exercise->id === null) {
+                \array_push($newExercises, $exercise);
+            }
+        }
+
+        return $newExercises;
     }
 
     private function processExercise(Exercise $exercise, ExerciseParams $exerciseParams): Exercise 
@@ -122,6 +175,14 @@ class TrainingPlanService
             $setsToRemove = \array_slice($sets, \count($exerciseParams->sets));
             foreach ($setsToRemove as $setToRemove) {
                 $this->entityManager->remove($setToRemove);
+            }
+        }
+
+        foreach ($sets as $index => $set) {
+            $repsList = $exerciseParams->sets;
+            if ($set->getReps() !== (int) $repsList['set'.$index]) {
+                $set->setReps((int) $repsList['set'.$index]);
+                $this->entityManager->persist($set);
             }
         }
 

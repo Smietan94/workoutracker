@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services;
 
 #region Use-Statement
-use App\DTO\WorkoutPlanParams;
 use App\Entity\TrainingDay;
 use App\Entity\WorkoutPlan;
 use Doctrine\ORM\EntityManager;
@@ -26,5 +25,10 @@ class TrainingDayService
         $this->entityManager->flush();
 
         return $trainingDay;
+    }
+
+    public function getById(int $id): TrainingDay
+    {
+        return $this->entityManager->find(TrainingDay::class, $id);
     }
 }

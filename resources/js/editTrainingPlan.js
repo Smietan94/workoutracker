@@ -55,14 +55,16 @@ function addSet(addSetButton) {
     const inputDiv          = document.createElement('div')
     const setsContainer     = document.getElementById(`setsContainer${ exerciseGridIndex }`)
     const setsCount         = setsContainer.querySelectorAll('.sets-input').length
+    const newSetAttributes  = {
+        'placeholder': 'Reps',
+        'type'       : 'number',
+        'min'        : '0',
+        'name'       : `trainingDays[${ trainingDayIndex }][exercises][${ exerciseIndex}][sets][set${ setsCount }]`
+    }
 
-    inputDiv.classList.add('set-input-div')
-    newSet.classList.add('sets-input')
-    addBasicInputClasses(newSet)
-    newSet.placeholder = 'Reps'
-    newSet.type        = 'number'
-    newSet.min         = '0'
-    newSet.name        = `trainingDays[${ trainingDayIndex }][exercises][${ exerciseIndex}][sets][set${ setsCount }]`
+    addClasses(inputDiv, ['set-input-div'])
+    addClasses(newSet, ['form-control', 'mt-1', 'sets-input'])
+    addAttributes(newSet, newSetAttributes)
 
     inputDiv.appendChild(newSet)
     setsContainer.appendChild(inputDiv)
@@ -82,26 +84,26 @@ function removeSet(removeSetButton) {
 }
 
 function addExerciseTableRow(addExerciseButton) {
-    const trainingDayIndex = addExerciseButton.getAttribute('data-training-day-index')
+    let basicInputClassArray  = ['form-control', 'mt-1']
+    let basicButtonClassArray = ['btn', 'btn-dark', 'add-set-btn', 'mt-1']
+    const trainingDayIndex    = addExerciseButton.getAttribute('data-training-day-index')
+    const tableBody           = document.getElementById(`trainingDayTBody${ trainingDayIndex }`)
+    const exercisesNum        = tableBody.querySelectorAll('tr').length
+    const prefix              = `trainingDays[${ trainingDayIndex }][exercises][${ exercisesNum }]`
+    const newTableRow         = document.createElement('tr')
 
-    const tableBody    = document.getElementById(`trainingDayTBody${ trainingDayIndex }`)
-
-    const exercisesNum = tableBody.querySelectorAll('tr').length
-    const prefix       = `trainingDays[${ trainingDayIndex }][exercises][${ exercisesNum }]`
-
-    const newTableRow  = document.createElement('tr')
     newTableRow.classList.add('exercise-row')
     newTableRow.setAttribute('data-exercise-id', `exercise${ trainingDayIndex }${ exercisesNum }`)
 
-    const indexTD = document.createElement('td')
-    indexTD.innerHTML = exercisesNum + 1
+    const indexTD            = document.createElement('td')
     const nameInputTD        = document.createElement('td')
     const descriptionInputTD = document.createElement('td')
     const setsInputTD        = document.createElement('td')
     const categoryInputTD    = document.createElement('td')
     const actionTD           = document.createElement('td')
-    actionTD.classList.add('text-center')
 
+    actionTD.classList.add('text-center')
+    indexTD.innerHTML     = exercisesNum + 1
     indexTD.id            = 'indexCell'
     nameInputTD.id        = 'nameCell'
     descriptionInputTD.id = 'descriptionCell'
@@ -109,17 +111,51 @@ function addExerciseTableRow(addExerciseButton) {
     categoryInputTD.id    = 'categoryCell'
     actionTD.id           = 'actionCell'
 
-    const nameInput       = document.createElement('input')
-    nameInput.name        = prefix + '[exerciseName]'
-    nameInput.type        = 'text'
-    nameInput.placeholder = 'Exercise Name'
-    addBasicInputClasses(nameInput)
+    const idHiddenInput           = document.createElement('input')
+    const idHiddenInputAttributes = {
+        'id': 'exerciseId',
+        'type': 'hidden',
+        'name': prefix + '[exerciseId]',
+        'value': null
+    }
+    addAttributes(idHiddenInput, idHiddenInputAttributes)
 
-    const descriptionInput       = document.createElement('input')
-    descriptionInput.name        = prefix + '[description]'
-    descriptionInput.type        = 'text'
-    descriptionInput.placeholder = 'Description'
-    addBasicInputClasses(descriptionInput)
+    const nameInput           = document.createElement('input')
+    const nameInputAttributes = {
+        'name'       : prefix + '[exerciseName]',
+        'type'       : 'text',
+        'placeholder': 'Exercise Name'
+    }
+    addAttributes(nameInput, nameInputAttributes)
+    addClasses(nameInput, basicInputClassArray)
+
+    const descriptionInput           = document.createElement('input')
+    const descriptionInputAttributes = {
+        'name'       : prefix + '[description]',
+        'type'       : 'text',
+        'placeholder': 'Description'
+    }
+    addAttributes(descriptionInput, descriptionInputAttributes)
+    addClasses(descriptionInput, basicInputClassArray)
+
+    const setInput           = document.createElement('input')
+    const setInputAttributes = {
+        'name'       : prefix + '[sets][set0]',
+        'type'       : 'number',
+        'min'        : '0',
+        'placeholder': 'Reps'
+    }
+    addAttributes(setInput, setInputAttributes)
+    addClasses(setInput, basicInputClassArray.concat(['sets-input']))
+
+    const categoryInput           = document.createElement('input')
+    const categoryInputAttributes = {
+        'name'       : prefix + '[category]',
+        'type'       : 'text',
+        'placeholder': 'Category Name'
+    }
+    addAttributes(categoryInput, categoryInputAttributes)
+    addClasses(categoryInput, basicInputClassArray)
 
     const setsContainer = document.createElement('div')
     setsContainer.id    = `setsContainer${ trainingDayIndex }${ exercisesNum }`
@@ -128,8 +164,7 @@ function addExerciseTableRow(addExerciseButton) {
     setInputDiv.classList.add('set-input-div')
 
     const setBtnDiv = document.createElement('div')
-    setBtnDiv.classList.add('row')
-    setBtnDiv.classList.add('mt-1')
+    addClasses(setBtnDiv, ['row', 'mt-1'])
 
     const addBtnDiv = document.createElement('div')
     addBtnDiv.classList.add('col')
@@ -137,52 +172,34 @@ function addExerciseTableRow(addExerciseButton) {
     const rmBtnDiv = document.createElement('div')
     rmBtnDiv.classList.add('col')
 
-    const setInput       = document.createElement('input')
-    setInput.name        = prefix + '[sets][set0]'
-    setInput.type        = 'number'
-    setInput.min         = '0'
-    setInput.placeholder = 'Reps'
-    setInput.classList.add('sets-input')
-    addBasicInputClasses(setInput)
-
-    const categoryInput       = document.createElement('input')
-    categoryInput.name        = prefix + '[category]'
-    categoryInput.type        = 'text'
-    categoryInput.placeholder = 'Category Name'
-    addBasicInputClasses(categoryInput)
-
-    const addSetButton = document.createElement('button')
-    addSetButton.type  = "button"
-    addSetButton.value = `${ trainingDayIndex }${ exercisesNum }`
-    addSetButton.classList.add('w-100')
-    addBasicButtonClasses(addSetButton)
-    addSetButton.setAttribute('data-training-day-index', trainingDayIndex)
-    addSetButton.setAttribute('data-exercise-index', exercisesNum)
+    const addSetButton           = document.createElement('button')
+    const addSetButtonAttributes = {
+        'type'                   : 'button',
+        'value'                  : `${ trainingDayIndex }${ exercisesNum }`,
+        'data-training-day-index': trainingDayIndex,
+        'data-exercise-index'    : exercisesNum
+    }
+    addAttributes(addSetButton, addSetButtonAttributes)
+    addClasses(addSetButton, basicButtonClassArray.concat(['w-100']))
 
     const removeSetButton = document.createElement('button')
     removeSetButton.type  = 'button'
     removeSetButton.value = `${ trainingDayIndex }${ exercisesNum }`
-    removeSetButton.classList.add('w-100')
-    addBasicButtonClasses(removeSetButton)
+    addClasses(removeSetButton, basicButtonClassArray.concat(['w-100']))
 
     const removeExerciseButton = document.createElement('button')
     removeExerciseButton.type  = 'button'
     removeExerciseButton.value = `${ trainingDayIndex }${ exercisesNum }`
-    addBasicButtonClasses(removeExerciseButton)
+    addClasses(removeExerciseButton, basicButtonClassArray)
 
     const addIcon = document.createElement('i')
-    addIcon.classList.add('bi')
-    addIcon.classList.add('bi-plus-circle')
-    addIcon.classList.add('me-1')
+    addClasses(addIcon, ['bi', 'bi-plus-circle', 'me-1'])
 
     const dashIcon = document.createElement('i')
-    dashIcon.classList.add('bi')
-    dashIcon.classList.add('bi-dash-circle')
-    dashIcon.classList.add('me-1')
+    addClasses(dashIcon, ['bi', 'bi-dash-circle', 'me-1'])
 
     const trashIcon = document.createElement('i')
-    trashIcon.classList.add('bi')
-    trashIcon.classList.add('bi-trash3-fill')
+    addClasses(trashIcon, ['bi', 'bi-trash3-fill'])
 
     addSetButton.appendChild(addIcon)
     removeSetButton.appendChild(dashIcon)
@@ -215,16 +232,16 @@ function addExerciseTableRow(addExerciseButton) {
     processButtons([removeExerciseButton], removeExerciseRow)
 }
 
-function addBasicInputClasses(input) {
-    input.classList.add('form-control')
-    input.classList.add('mt-1')
+function addAttributes(element, attributesArray) {
+    for (const [key, value] of Object.entries(attributesArray)) {
+        element.setAttribute(key, value)
+    }
 }
 
-function addBasicButtonClasses(button) {
-    button.classList.add('btn')
-    button.classList.add('btn-dark')
-    button.classList.add('add-set-btn')
-    button.classList.add('mt-1')
+function addClasses(element, classArray) {
+    for (let i = 0; i < classArray.length; i++) {
+        element.classList.add(classArray[i])
+    }
 }
 
 function updateTbody(tbody) {
@@ -244,8 +261,8 @@ function updateTbody(tbody) {
         const removeSetButton  = exerciseRow.querySelector('.remove-set-btn')
 
         indexCell.innerHTML = exerciseIndex + 1
+        setsContainer.id    = `setsContainer${ trainingDayIndex }${ exerciseIndex }`
 
-        setsContainer.id = `setsContainer${ trainingDayIndex }${ exerciseIndex }`
         if (exerciseIdInput) {
             exerciseIdInput.name = `${ prefix }[exerciseId]`
         }

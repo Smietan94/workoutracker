@@ -156,8 +156,7 @@ class WorkoutPlansController
         } 
 
         $params   = $this->exerciseService->getExerciseParams(($data + ['trainingDayId' => $trainingDays[$trainingDay]->getId()]));
-        $exercise = $this->exerciseService->storeExercise($params);
-        $this->setService->storeSets($params, $exercise);
+        $this->exerciseService->storeExercise($params);
 
         return $response;
     }

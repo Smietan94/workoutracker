@@ -63,9 +63,9 @@ class TrainingPlanController
             $request->getParsedBody()
         );
 
-        echo '<pre style="background:white">';
-        \print_r($dataToUpdate);
-        echo '</pre>';
+        // echo '<pre style="background:white">';
+        // \print_r($dataToUpdate);
+        // echo '</pre>';
 
         $this->trainingPlanService->update($dataToUpdate);
 
