@@ -54,7 +54,6 @@ return function (App $app) {
 
     $app->group('/trainingPlan', function (RouteCollectorProxy $trainingPlan) {
         $trainingPlan->get('/{id:[0-9]+}', [TrainingPlanController::class, 'index']);
-        $trainingPlan->get('/load', [TrainingPlanController::class, 'load']);
         $trainingPlan->get('/editWorkout/{id:[0-9]+}', [TrainingPlanController::class, 'editTrainingPlan']);
         $trainingPlan->post('/{id:[0-9]+}', [TrainingPlanController::class, 'updateTrainingPlan']);
     })->add(AuthMiddleware::class);

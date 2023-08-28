@@ -42,6 +42,9 @@ class Exercise
     #[ManyToOne(inversedBy: 'exercises')]
     private Category $category;
 
+    #[ManyToOne(inversedBy: 'exercises')]
+    private User $user;
+
     #[OneToMany(mappedBy: 'exercise', targetEntity: Set::class, cascade: ['remove'])]
     private Collection $sets;
 
@@ -141,6 +144,19 @@ class Exercise
     {
         $category->addExercise($this);
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function setUser(User $user): Exercise
+    {
+        $user->addExercise($this);
+        $this->user = $user;
 
         return $this;
     }

@@ -29,7 +29,7 @@ class Category
     #[Column(unique: true)]
     private string $name;
 
-    #[OneToMany(mappedBy: 'Category', targetEntity: Exercise::class)]
+    #[OneToMany(mappedBy: 'category', targetEntity: Exercise::class)]
     private Collection $exercise;
 
     public function __construct()

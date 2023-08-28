@@ -11,10 +11,11 @@
     <div class="container content-body">
         {% if errors %}
             <div class='alert alert-danger text-bold text-center'>
-                {{ errors['trainingDays.*.exercises.*.exerciseName'] | first }}<br>
-                {{ errors['trainingDays.*.exercises.*.description'] | first }}<br>
-                {{ errors['trainingDays.*.exercises.*.category'] | first }}<br>
-                {{ errors['trainingDays.*.exercises.*.sets.*'] | first }}<br>
+                <p>{{ errors['trainingDays.*.exercises.*.exerciseName'] | first }}</p>
+                <p>{{ errors['trainingDays.*.exercises.*.description'] | first }}</p>
+                <p>{{ errors['trainingDays.*.exercises.*.category'] | first }}</p>
+                <p>{{ errors['trainingDays.*.exercises.*.sets.*'] | first }}</p>
+                <p>{{ errors.workoutPlanId | first }}</p>
             </div>
         {% endif %}
         <form  action="/trainingPlan/{{ workoutPlanId }}" method="post">

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Services;
 
 #region Use-Statements
+
+use App\Contracts\SessionInterface;
 use App\DTO\DataTableQueryParams;
 use App\DTO\WorkoutPlanParams;
 use App\Entity\User;
@@ -15,8 +17,10 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class WorkoutPlanService
 {
-    public function __construct(private readonly EntityManager $entityManager)
-    {
+    public function __construct(
+        private readonly EntityManager $entityManager,
+        private readonly SessionInterface $session,
+    ) {
     }
 
     public function create(WorkoutPlanParams $params): WorkoutPlan
@@ -64,13 +68,18 @@ class WorkoutPlanService
 
     public function getPaginatedWorkoutPlans(DataTableQueryParams $params): Paginator
     {
-        $query = $this->entityManager
+        $userId = $this->session->get('user');
+        $user   = $this->entityManager->find(User::class, $userId);
+        $query  = $this->entityManager
             ->getRepository(WorkoutPlan::class)
             ->createQueryBuilder('w')
+            ->leftJoin('w.user', 'u')
+            ->where('u = :user')
+            ->setParameter('user', $user)
             ->setFirstResult($params->start)
             ->setMaxResults($params->length);
 
-        $orderBy = \in_array($params->orderBy, ['name', 'notes', 'trainingsPerWeek', 'createdAt']) ? $params->orderBy : 'createdAt';
+        $orderBy  = \in_array($params->orderBy, ['name', 'notes', 'trainingsPerWeek', 'createdAt']) ? $params->orderBy : 'createdAt';
         $orderDir = \strtolower($params->orderDir) === 'asc' ? 'asc' : 'desc';
 
         if (! empty($params->searchTerm)) {

@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Services;
 
 #region Use-Statements
+
+use App\Contracts\SessionInterface;
 use App\DTO\DataTableQueryParams;
 use App\DTO\ExerciseParams;
 use App\Entity\Category;
 use App\Entity\Exercise;
 use App\Entity\TrainingDay;
+use App\Entity\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -23,7 +26,8 @@ class ExerciseService
         private readonly EntityManager $entityManager,
         private readonly TrainingDayService $trainingDayService,
         private readonly CategoryService $categoryService,
-        private readonly SetService $setService
+        private readonly SetService $setService,
+        private readonly SessionInterface $session,
     ) {
     }
 
@@ -62,6 +66,8 @@ class ExerciseService
 
     public function storeExercise(ExerciseParams $params): Exercise
     {
+        $userId   = $this->session->get('user');
+        $user     = $this->entityManager->find(User::class, $userId);
         $exercise = new Exercise();
 
         $exercise->setExerciseName($params->name);
@@ -69,6 +75,7 @@ class ExerciseService
         $exercise->setTrainingDay($this->checkTrainingDay($params->trainingDay));
         $exercise->setCategory($this->checkCategory($params->category));
         $exercise->setDescription($params->description);
+        $exercise->setUser($user);
 
         $this->entityManager->persist($exercise);
         $this->entityManager->flush();
@@ -80,13 +87,18 @@ class ExerciseService
 
     public function getPaginatedExercises(DataTableQueryParams $params, int $id): Paginator
     {
+        $userId   = $this->session->get('user');
+        $user     = $this->entityManager->find(User::class, $userId);
         $category = $this->entityManager->find(Category::class, $id);
 
         $query = $this->entityManager
             ->getRepository(Exercise::class)
             ->createQueryBuilder('e')
+            ->leftJoin('e.user', 'u')
             ->leftJoin('e.category', 'c')
-            ->where('c = :category')
+            ->where('u = :user')
+            ->setParameter('user', $user)
+            ->andWhere('c = :category')
             ->setParameter('category', $category)
             ->setFirstResult($params->start)
             ->setMaxResults($params->length);
@@ -96,9 +108,15 @@ class ExerciseService
 
     public function getAllPaginatedEXercises(DataTableQueryParams $params): Paginator
     {
+        $userId = $this->session->get('user');
+        $user   = $this->entityManager->find(User::class, $userId);
+
         $query = $this->entityManager
             ->getRepository(Exercise::class)
             ->createQueryBuilder('e')
+            ->leftJoin('e.user', 'u')
+            ->where('u = :user')
+            ->setParameter('user', $user)
             ->setFirstResult($params->start)
             ->setMaxResults($params->length);
 

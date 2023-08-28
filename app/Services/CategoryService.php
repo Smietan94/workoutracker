@@ -5,16 +5,20 @@ declare(strict_types=1);
 namespace App\Services;
 
 #region Use-Statements
+use App\Contracts\SessionInterface;
 use App\DTO\DataTableQueryParams;
 use App\Entity\Category;
+use App\Entity\User;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 #endregion
 
 class CategoryService
 {
-    public function __construct(private readonly EntityManager $entityManager)
-    {
+    public function __construct(
+        private readonly EntityManager $entityManager,
+        private readonly SessionInterface $session,
+    ) {
     }
 
     public function create(string $name): Category
@@ -26,9 +30,16 @@ class CategoryService
 
     public function getPaginatedCategories(DataTableQueryParams $params): Paginator 
     {
+        $userId = $this->session->get('user');
+        $user   = $this->entityManager->find(User::class, $userId);
+
         $query = $this->entityManager
             ->getRepository(Category::class)
             ->createQueryBuilder('c')
+            ->join('c.exercise', 'e')
+            ->join('e.user', 'u')
+            ->where('u = :user')
+            ->setParameter('user', $user)
             ->setFirstResult($params->start)
             ->setMaxResults($params->length);
 

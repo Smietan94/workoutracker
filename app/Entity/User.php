@@ -39,16 +39,20 @@ class User implements UserInterface
     #[Column]
     private string $username;
 
-    #[OneToMany(mappedBy: 'User', targetEntity: WorkoutPlan::class)]
+    #[OneToMany(mappedBy: 'user', targetEntity: WorkoutPlan::class)]
     private Collection $workoutPlans;
 
-    #[OneToMany(mappedBy: 'User', targetEntity: Category::class)]
+    #[OneToMany(mappedBy: 'user', targetEntity: Category::class)]
     private Collection $categories;
+
+    #[OneToMany(mappedBy: 'user', targetEntity: Exercise::class)]
+    private Collection $exercises;
 
     public function __construct()
     {
         $this->workoutPlans = new ArrayCollection();
         $this->categories   = new ArrayCollection();
+        $this->exercises    = new ArrayCollection();
     }
 
     public function getId(): int
@@ -148,6 +152,18 @@ class User implements UserInterface
     public function addCategory(Category $category): User
     {
         $this->categories->add($category);
+
+        return $this;
+    }
+
+    public function getExecises(): ArrayCollection|Collection
+    {
+        return $this->exercises;
+    }
+
+    public function addExercise(Exercise $exercise): User
+    {
+        $this->exercises->add($exercise);
 
         return $this;
     }

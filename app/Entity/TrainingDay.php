@@ -42,7 +42,7 @@ class TrainingDay
     #[OneToMany(mappedBy: 'trainingDay', targetEntity: TrainingDayResult::class)]
     private Collection $trainingDayResults;
 
-    #[OneToMany(mappedBy: 'trainingDay', targetEntity: Exercise::class, cascade: ['remove'])]
+    #[OneToMany(mappedBy: 'trainingDay', targetEntity: Exercise::class, cascade: ['remove', 'persist'])]
     private Collection $exercises;
 
     public function __construct()
