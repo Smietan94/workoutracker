@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 #region Use-Statements
+
+use App\Entity\Traits\Date;
 use App\Entity\Traits\HasTimestamps;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
@@ -16,7 +18,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
 #endregion
 
-#[Entity, Table('ecercise_results')]
+#[Entity, Table('exercise_results')]
 #[HasLifecycleCallbacks]
 class ExerciseResult
 {
@@ -31,7 +33,7 @@ class ExerciseResult
     #[Column]
     private string $notes;
 
-    #[Column]
+    #[Column()]
     private \DateTime $date;
 
     #[ManyToOne(inversedBy: 'exercise_results')]
@@ -65,19 +67,7 @@ class ExerciseResult
 
         return $this;
     }
-    
-    public function getDate(): \DateTime
-    {
-        return $this->date;
-    }
-    
-    public function setDate(\DateTime $date): ExerciseResult
-    {
-        $this->date = $date;
 
-        return $this;
-    }
-    
     public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
@@ -98,6 +88,18 @@ class ExerciseResult
     public function setUpdatedAt(\DateTime $updatedAt): ExerciseResult
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getDate(): \DateTime
+    {
+        return $this->date;
+    }
+    
+    public function setDate(\DateTime $date): ExerciseResult
+    {
+        $this->date = $date;
 
         return $this;
     }

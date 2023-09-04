@@ -35,6 +35,7 @@ window.addEventListener('DOMContentLoaded', function() {
                     <i class="bi bi-save me-1"></i>
                     Finish
                 `
+                trainingDay = 0
             } else {
                 document.getElementById('save-training-day-btn').innerHTML = `
                     <i class="bi bi-calendar-plus me-1"></i>
@@ -124,15 +125,34 @@ window.addEventListener('DOMContentLoaded', function() {
     })
 
     document.querySelector('.next-training-day-btn').addEventListener('click', function(event) {
-        addExercise(addExerciseModal, table, trainingDay++)
+        addExercise(addExerciseModal, table, trainingDay)
+        console.log(trainingDay)
+        console.log(trainingsPerWeek)
         if (trainingsPerWeek - 1 == trainingDay) {
+            console.log('git')
+            trainingDay++
             setTimeout(() => {
                 document.getElementById('save-training-day-btn').innerHTML = `
                     <i class="bi bi-save me-1"></i>
                     Finish
                 `
             }, 500)
-        } else if (trainingsPerWeek > trainingDay) {
+            trainingDay = 0
+        } else if (trainingsPerWeek - 2 == trainingDay) {
+            console.log('git')
+            trainingDay++
+            setTimeout(() => {
+                document.getElementById('save-training-day-btn').innerHTML = `
+                    <i class="bi bi-save me-1"></i>
+                    Finish
+                `
+            }, 500)
+            setTimeout(() => {
+                addExerciseModal.show();
+            }, 500)
+        } else if (trainingsPerWeek >= trainingDay) {
+            console.log('dupa')
+            trainingDay++
             setTimeout(() => {
                 document.getElementById('save-training-day-btn').innerHTML = `
                     <i class="bi bi-calendar-plus me-1"></i>

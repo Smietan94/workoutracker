@@ -9,6 +9,7 @@ use App\Controllers\ExerciseController;
 use App\Controllers\HomeController;
 use App\Controllers\TrainingPlanController;
 use App\Controllers\WorkoutPlansController;
+use App\Controllers\WorkoutRecordController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\GuestMiddleware;
 use Slim\App;
@@ -56,5 +57,10 @@ return function (App $app) {
         $trainingPlan->get('/{id:[0-9]+}', [TrainingPlanController::class, 'index']);
         $trainingPlan->get('/editWorkout/{id:[0-9]+}', [TrainingPlanController::class, 'editTrainingPlan']);
         $trainingPlan->post('/{id:[0-9]+}', [TrainingPlanController::class, 'updateTrainingPlan']);
+    })->add(AuthMiddleware::class);
+
+    $app->group('/recordWorkout', function (RouteCollectorProxy $recordWorkout) {
+        $recordWorkout->get('/trainingDaySummary/{id:[0-9]+}', [WorkoutRecordController::class, 'index']);
+        $recordWorkout->post('/trainingDaySummary/{id:[0-9]+}', [WorkoutRecordController::class, 'exercisesSummary']);
     })->add(AuthMiddleware::class);
 };

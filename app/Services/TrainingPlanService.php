@@ -123,10 +123,6 @@ class TrainingPlanService
             }
         }
 
-        // echo '<pre style="background:white">';
-        // \print_r($exercisesIdsToRemove);
-        // echo '</pre>';
-
         return $exercisesIdsToRemove;
     }
 
@@ -171,18 +167,18 @@ class TrainingPlanService
                 $setsToAdd
             );
             $this->setService->storeSets($paramsToAdd, $exercise);
+
+            foreach ($sets as $index => $set) {
+                $repsList = $exerciseParams->sets;
+                if ($set->getReps() !== (int) $repsList['set'.$index]) {
+                    $set->setReps((int) $repsList['set'.$index]);
+                    $this->entityManager->persist($set);
+                }
+            }
         } elseif ($exerciseParams->setsNumber < count($sets)) {
             $setsToRemove = \array_slice($sets, \count($exerciseParams->sets));
             foreach ($setsToRemove as $setToRemove) {
                 $this->entityManager->remove($setToRemove);
-            }
-        }
-
-        foreach ($sets as $index => $set) {
-            $repsList = $exerciseParams->sets;
-            if ($set->getReps() !== (int) $repsList['set'.$index]) {
-                $set->setReps((int) $repsList['set'.$index]);
-                $this->entityManager->persist($set);
             }
         }
 
@@ -196,11 +192,7 @@ class TrainingPlanService
     {
         $category = $this->categoryService->getByName($categoryName);
 
-        if (! $category) {
-            $category = $this->categoryService->create($categoryName);
-        }
-
-        return $category;
+        return $category ?? $this->categoryService->create($categoryName);
     }
 
     private function getTrainingPlanParams(WorkoutPlan $workoutPlan): TrainingPlanParams

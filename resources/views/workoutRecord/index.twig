@@ -1,0 +1,85 @@
+{% extends "layout.twig" %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('workoutRecord') }}
+{% endblock %}
+
+{% block title %}Workout Record{% endblock %}
+
+{% block content %}
+    <div class="workoutRecord container content-body">
+        {% if errors %}
+            <div class='alert alert-danger text-bold text-center'>
+                <p>{{ errors['exercises.*.exerciseId'] | first }}</p>
+                <p>{{ errors['exercises.*.weight'] | first }}</p>
+                <p>{{ errors['exercises.*.notes'] | first }}</p>
+                <p>{{ errors.trainingDayId | first }}</p>
+                <p>{{ errors.trainingDayDate | first }}</p>
+                <p>{{ errors.trainingDayNotes | first }}</p>
+            </div>
+        {% endif %}
+        <form action="{{ trainingDayId }}" method="post">
+        {{ csrf.fields | raw }}
+            <table class="table table-secondary table-striped table-hover mt-3">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Exercise Name</th>
+                    <th>Sets</th>
+                    <th>Weight</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for exercise in exercises %}
+                    {% set exerciseIndex = loop.index %}
+                    <tr>
+                        <input type="hidden" name="exercises[{{ exerciseIndex - 1 }}][exerciseId]" value="{{ exercise['exerciseId'] }}">
+                        <th>{{ exerciseIndex }}</th>
+                        <th class="fw-light">{{ exercise['exerciseName'] }}</th>
+                        <th class="fw-light">
+                            {% for set_ in exercise['sets'] %}
+                                {{ set_ }}
+                            {% endfor %}
+                        </th>
+                        <th>
+                            <input type="number" name="exercises[{{ exerciseIndex - 1 }}][weight]" 
+                                class="form-control" min="0" step=".5"
+                                {% if exercise['weight'] is defined %}
+                                    placeholder="Previous record: {{ exercise['weight'] }}"
+                                {% else %}
+                                    placeholder="No Previous Records"
+                                {% endif %}
+                            >
+                        </th>
+                        <th>
+                            <input type="text" name="exercises[{{ exerciseIndex - 1 }}][notes]" 
+                                class="form-control"
+                                placeholder="Notes">
+                        </th>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <th colspan="2">
+                        <input type="hidden" name="trainingDayId" value="{{ trainingDayId }}">
+                        <input name="trainingDayDate" 
+                            placeholder="Training Day Date" 
+                            class="textbox-n form-control w-100" 
+                            type="text" onfocus="(this.type='date')"/>
+                    </th>
+                    <th class="fs-5 text-end">Training Day Notes:</th>
+                    <th colspan="2"><input type="text" name="trainingDayNotes" class="form-control" placeholder="Notes"></th>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="6" class="text-center">
+                        <input type="submit" class="btn btn-dark w-100" value="Save">
+                    </td>
+                </tr>
+            </tfoot>
+            </table>
+        </form>
+    </div>
+{% endblock %}

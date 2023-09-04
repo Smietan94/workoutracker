@@ -48,7 +48,7 @@ class Exercise
     #[OneToMany(mappedBy: 'exercise', targetEntity: Set::class, cascade: ['remove'])]
     private Collection $sets;
 
-    #[OneToMany(mappedBy: 'exercise', targetEntity: ExerciseResult::class)]
+    #[OneToMany(mappedBy: 'exercise', targetEntity: ExerciseResult::class, cascade: ['remove'])]
     private Collection $exerciseResults;
 
     public function __construct()

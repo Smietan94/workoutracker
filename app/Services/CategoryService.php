@@ -47,7 +47,7 @@ class CategoryService
         $orderDir = \strtolower($params->orderDir) === 'asc' ? 'asc' : 'desc';
 
         if (! empty($params->searchTerm)) {
-            $query->where('c.name LIKE :name')->setParameter('name', '%' . \addcslashes($params->searchTerm, '%_') . '%');
+            $query->andWhere('c.name LIKE :name')->setParameter('name', '%' . \addcslashes($params->searchTerm, '%_') . '%');
         }
 
         $query->orderBy('c.' . $orderBy, $orderDir);

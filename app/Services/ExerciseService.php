@@ -127,10 +127,7 @@ class ExerciseService
     {
         if (\is_string($category)) {
             $newCategory = $this->categoryService->getByName($category);
-            if (!$newCategory) {
-                $newCategory = $this->categoryService->create($category);
-            }
-            return $newCategory;
+            return $newCategory ?? $this->categoryService->create($category);
         } else if ($category instanceof Category) {
             return $category;
         } else {
@@ -155,7 +152,7 @@ class ExerciseService
         $orderDir = \strtolower($params->orderDir) === 'asc' ? 'asc' : 'desc';
 
         if (! empty($params->searchTerm)) {
-            $query->where('e.exerciseName LIKE :exerciseName')->setParameter('exerciseName', '%' . \addcslashes($params->searchTerm, '%_') . '%');
+            $query->andWhere('e.exerciseName LIKE :exerciseName')->setParameter('exerciseName', '%' . \addcslashes($params->searchTerm, '%_') . '%');
         }
 
         $query->orderBy('e.' . $orderBy, $orderDir);

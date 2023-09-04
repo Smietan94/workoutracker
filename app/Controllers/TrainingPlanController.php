@@ -6,14 +6,11 @@ namespace App\Controllers;
 
 #region Use-Statements
 use App\Contracts\RequestValidatorFactoryInterface;
-use App\Contracts\SessionInterface;
-use App\Entity\User;
 use App\RequestValidators\UpdateTrainingPlanRequestValidator;
 use App\ResponseFormatter;
 use App\Services\RequestService;
 use App\Services\TrainingPlanService;
 use App\Services\WorkoutPlanService;
-use Doctrine\ORM\EntityManager;
 use Slim\Views\Twig;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -27,9 +24,7 @@ class TrainingPlanController
         private readonly ResponseFormatter $responseFormatter,
         private readonly RequestService $requestService,
         private readonly WorkoutPlanService $workoutPlanService,
-        private readonly TrainingPlanService $trainingPlanService,
-        private readonly EntityManager $entityManager,
-        private readonly SessionInterface $session
+        private readonly TrainingPlanService $trainingPlanService
     ) {
     }
 
@@ -62,10 +57,6 @@ class TrainingPlanController
         $dataToUpdate = $this->requestValidatorFactory->make(UpdateTrainingPlanRequestValidator::class)->validate(
             $request->getParsedBody()
         );
-
-        // echo '<pre style="background:white">';
-        // \print_r($dataToUpdate);
-        // echo '</pre>';
 
         $this->trainingPlanService->update($dataToUpdate);
 

@@ -49,7 +49,6 @@ class WorkoutPlansController
 
     public function store(Request $request, Response $response): Response
     {
-        // TODO
         $data = $this->requestValidatorFactory->make(RegisterWorkoutPlanValidator::class)->validate(
             $request->getParsedBody()
         );
@@ -121,7 +120,6 @@ class WorkoutPlansController
 
     public function update(Request $request, Response $response, array $args): Response
     {
-        // TODO
         $data = $this->requestValidatorFactory->make(UpdateWorkoutPlanRequestValidator::class)->validate(
             $args + $request->getParsedBody()
         );

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 #region Use-Statements
+
+use App\Entity\Traits\Date;
 use App\Entity\Traits\HasTimestamps;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -27,11 +29,8 @@ class TrainingDayResult
     #[Column]
     private string $notes;
 
-    #[Column(name: 'created_at')]
-    private \DateTime $createdAt;
-
-    #[Column(name: 'updated_at')]
-    private \DateTime $updatedAt;
+    #[Column()]
+    private \DateTime $date;
 
     #[ManyToOne(inversedBy: 'training_day_results')]
     private TrainingDay $trainingDay;
@@ -73,6 +72,18 @@ class TrainingDayResult
     public function setUpdatedAt(\DateTime $updatedAt): TrainingDayResult
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getDate(): \DateTime
+    {
+        return $this->date;
+    }
+    
+    public function setDate(\DateTime $date): TrainingDayResult
+    {
+        $this->date = $date;
 
         return $this;
     }

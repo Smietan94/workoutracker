@@ -67,5 +67,5 @@ class UpdateTrainingPlanRequestValidator implements RequestValidatorInterface
         }
 
         return $data;
-    } 
+    }
 }
