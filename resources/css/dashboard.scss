@@ -2,10 +2,20 @@
 
 .top-container {
     background-color: #D8D9DA;
-    height: 500px;
+    height: 600px;
   }
   
 .category-card {
     background-color: #D8D9DA;
     height: 150px;
+  }
+
+.col-scroll {
+    height: 600px;
+    overflow-y: auto;
+  }
+
+.chart-container {
+    width: 100%;
+    height: 600px;
   }

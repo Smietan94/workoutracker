@@ -17,7 +17,11 @@ use Slim\Routing\RouteCollectorProxy;
 #endregion
 
 return function (App $app) {
-    $app->get('/', [HomeController::class, 'index'])->add(AuthMiddleware::class);
+    $app->group('/', function (RouteCollectorProxy $home) {
+        $home->get('', [HomeController::class, 'index']);
+        $home->get('{id:[0-9]+}', [HomeController::class, 'indexWorkoutPlan']);
+        $home->get('load/{id:[0-9]+}', [HomeController::class, 'load']);
+    })->add(AuthMiddleware::class);
 
     $app->group('', function (RouteCollectorProxy $guest) {
         $guest->get('/login', [AuthController::class, 'loginView']);

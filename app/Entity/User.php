@@ -16,6 +16,7 @@ use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
+
 #endregion
 
 #[Entity, Table('users')]
@@ -38,6 +39,9 @@ class User implements UserInterface
 
     #[Column]
     private string $username;
+
+    #[Column(nullable: true)]
+    private ?int $mainWorkoutPlanId;
 
     #[OneToMany(mappedBy: 'user', targetEntity: WorkoutPlan::class)]
     private Collection $workoutPlans;
@@ -132,6 +136,18 @@ class User implements UserInterface
         return $this;
     }
 
+    public function getMainWorkoutPlanId(): ?int
+    {
+        return $this->mainWorkoutPlanId;
+    }
+
+    public function setMainWorkoutPlanId(?int $mainWorkoutPlanId): User
+    {
+        $this->mainWorkoutPlanId = $mainWorkoutPlanId;
+
+        return $this;
+    }
+
     public function getWorkoutPlans(): ArrayCollection|Collection
     {
         return $this->workoutPlans;
@@ -156,7 +172,7 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getExecises(): ArrayCollection|Collection
+    public function getExercises(): ArrayCollection|Collection
     {
         return $this->exercises;
     }

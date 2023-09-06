@@ -1,0 +1,19 @@
+<div class="modal fade" id="notesModal{{ trainingDayIndex }}{{ exerciseIndex }}" tabindex="-1" aria-labelledby="notesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="notesModalLabel">Note: {{ exercise.exerciseName }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4>
+                    {% if exercise.notes == null %}
+                        No notes added
+                    {% else %}
+                        {{ exercise.notes }}
+                    {% endif %}
+                </h4>
+            </div>
+        </div>
+    </div>
+</div>

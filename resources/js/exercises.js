@@ -7,7 +7,6 @@ window.addEventListener('DOMContentLoaded', function() {
     const url        = new URL(currentUrl)
     const pathName   = url.pathname
     const categoryId = pathName.split('/').pop()
-    console.log(categoryId)
 
     const table = new DataTable('#exercisesTable', {
         serverSide: true,

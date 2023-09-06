@@ -37,10 +37,6 @@ window.addEventListener('DOMContentLoaded', function () {
                 sortable: false,
                 data: row => `
                     <div class="d-flex dlex-">
-                        <button type="submit" class="ms-2 btn btn-outline-primary delete-category-btn"
-                                data-id="${ row.id }">
-                            <i class="bi bi-trash3-fill"></i>
-                        </button>
                         <button class="ms-2 btn btn-outline-primary edit-category-btn"
                                 data-id="${ row.id }">
                             <i class="bi bi-pencil-fill"></i>
@@ -101,3 +97,9 @@ function openEditCategoryModal(modal, {id, name}) {
 
 //     modal.show()
 // }
+
+
+{/* <button type="submit" class="ms-2 btn btn-outline-primary delete-category-btn"
+data-id="${ row.id }">
+<i class="bi bi-trash3-fill"></i>
+</button> */}

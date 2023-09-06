@@ -36,7 +36,7 @@ class WorkoutPlan
     #[Column(nullable: true)]
     private ?string $notes = null;
 
-    #[ManyToOne(inversedBy: 'workout_plans')]
+    #[ManyToOne(inversedBy: 'workoutPlans')]
     private User $user;
 
     #[OneToMany(mappedBy: 'workoutPlan', targetEntity: TrainingDay::class, cascade: ['remove'])]

@@ -34,7 +34,7 @@ class WorkoutRecordController
     public function index(Request $request, Response $response, array $args): Response
     {
         $trainingDayId = (int) $args['id'];
-
+        // \var_dump($this->workoutRecordService->getTrainingDayData($trainingDayId));
         $data = [
             'trainingDayId' => $trainingDayId,
             'exercises'     => $this->workoutRecordService->getTrainingDayData($trainingDayId),
@@ -62,9 +62,6 @@ class WorkoutRecordController
 
         $this->workoutRecordService->recordTrainingDay((int) $data['trainingDayId'], $date, $data['trainingDayNotes']);
 
-        return $this->twig->render(
-            $response,
-            'dashboard.twig',
-        );
+        return $response->withHeader('Location', '/workoutplans');
     }
 }

@@ -24,12 +24,13 @@ window.addEventListener('DOMContentLoaded', function() {
         }, newWorkoutPlanModal._element).then(response => {
             if (response.ok) {
                 table.draw()
-                document.getElementById('workout-name-input').value = ''
+                document.getElementById('workout-name-input').value  = ''
                 document.getElementById('training-days-input').value = ''
-                document.getElementById('notes-input').value = ''
+                document.getElementById('notes-input').value         = ''
                 newWorkoutPlanModal.hide()
                 addExerciseModal.show()
             }
+            updateTrainingDayCounterHeader(trainingDay + 1, trainingsPerWeek)
             if (trainingsPerWeek - 1 == trainingDay) {
                 document.getElementById('save-training-day-btn').innerHTML = `
                     <i class="bi bi-save me-1"></i>
@@ -142,6 +143,7 @@ window.addEventListener('DOMContentLoaded', function() {
             console.log('git')
             trainingDay++
             setTimeout(() => {
+                updateTrainingDayCounterHeader(trainingDay + 1, trainingsPerWeek)
                 document.getElementById('save-training-day-btn').innerHTML = `
                     <i class="bi bi-save me-1"></i>
                     Finish
@@ -154,6 +156,7 @@ window.addEventListener('DOMContentLoaded', function() {
             console.log('dupa')
             trainingDay++
             setTimeout(() => {
+                updateTrainingDayCounterHeader(trainingDay + 1, trainingsPerWeek)
                 document.getElementById('save-training-day-btn').innerHTML = `
                     <i class="bi bi-calendar-plus me-1"></i>
                     Next Training Day
@@ -164,6 +167,7 @@ window.addEventListener('DOMContentLoaded', function() {
             }, 500)
         } else {
             trainingDay = 0
+            setTimeout(updateTrainingDayCounterHeader(trainingDay + 1, trainingsPerWeek), 500)
         }
         setCounter = 1
     })
@@ -254,4 +258,10 @@ function addExercise(modal, table, trainingDay) {
             console.log(response)
         }
     })
+}
+
+function updateTrainingDayCounterHeader(trainingDay, trainingsPerWeek) {
+    const header = document.getElementById('dayCounterHeader')
+
+    header.innerHTML = `day: ${ trainingDay } of ${ trainingsPerWeek }`
 }

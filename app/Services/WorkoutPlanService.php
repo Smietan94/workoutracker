@@ -25,9 +25,10 @@ class WorkoutPlanService
 
     public function create(WorkoutPlanParams $params): WorkoutPlan
     {
+        $user = $params->user;
         $workoutPlan = new WorkoutPlan();
 
-        $workoutPlan->setUser($params->user);
+        $workoutPlan->setUser($user);
 
         $workoutPlan->setName($params->name);
         $workoutPlan->setTrainingsPerWeek($params->trainingsPerWeek);
@@ -36,6 +37,10 @@ class WorkoutPlanService
         $this->entityManager->persist($workoutPlan);
 
         $this->entityManager->flush();
+
+        if (\count($user->getWorkoutPlans()->toArray()) <= 1) {
+            $user->setMainWorkoutPlanId($workoutPlan->getId());
+        }
 
         return $workoutPlan;
     }
@@ -83,7 +88,7 @@ class WorkoutPlanService
         $orderDir = \strtolower($params->orderDir) === 'asc' ? 'asc' : 'desc';
 
         if (! empty($params->searchTerm)) {
-            $query->where('w.name LIKE :name')->setParameter('name', '%' . \addcslashes($params->searchTerm, '%_') . '%');
+            $query->andWhere('w.name LIKE :name')->setParameter('name', '%' . \addcslashes($params->searchTerm, '%_') . '%');
         }
 
         $query->orderBy('w.' . $orderBy, $orderDir);
@@ -93,12 +98,15 @@ class WorkoutPlanService
 
     public function delete(int $id): void
     {
-        $workoutPlan  = $this->entityManager->find(WorkoutPlan::class, $id);
+        $workoutPlan = $this->getById($id);
+        $userId      = $this->session->get('user');
+        $user        = $this->entityManager->find(User::class, $userId);
 
         if (! $workoutPlan) {
             throw new \InvalidArgumentException("Workout Plan with ID " . $id . " does not exists.");
         }
 
+        $user->setMainWorkoutPlanId(null);
         $this->entityManager->remove($workoutPlan);
         $this->entityManager->flush();
     }

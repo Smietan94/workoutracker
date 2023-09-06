@@ -36,16 +36,16 @@ class WorkoutRecordService
         }
 
         $exercises           = $trainingDay->getExercises()->toArray();
-        $lastTrainingWeights = $this->getLastTrainingWeights($exercises);
+        $lastTrainingData = $this->getLastTrainingData($exercises);
 
-        if (! $lastTrainingWeights) {
+        if (! $lastTrainingData) {
             $exercisesData = \array_map(fn ($exercise) => [
                 'exerciseName' => $exercise->getExerciseName(),
                 'exerciseId'   => $exercise->getId(),
                 'sets'         => \array_map(fn ($set) => $set->getReps(), $exercise->getSets()->toArray()),
             ], $exercises);
         } else {
-            $exercisesData = $this->processTrainingDayData($exercises, $lastTrainingWeights);
+            $exercisesData = $this->processTrainingDayData($exercises, $lastTrainingData);
         }
 
         return $exercisesData;
@@ -93,27 +93,33 @@ class WorkoutRecordService
                 'exerciseName' => $exercise->getExerciseName(),
                 'exerciseId'   => $exercise->getId(),
                 'sets'         => \array_map(fn ($set) => $set->getReps(), $exercise->getSets()->toArray()),
-                'weight'       => (float) $weights[$index]
+                'weight'       => (float) $weights[$index]['weight']
             ]);
         }
 
         return $exercisesData;
     }
 
-    private function getLastTrainingWeights(array $exercises): array
+    public function getLastTrainingData(array $exercises): array
     {
         $qb = $this->entityManager
             ->createQueryBuilder()
-            ->select('e.id as exerciseId, r.weight as weight')
+            ->select('e.exerciseName as exerciseName, r.weight as weight, r.notes as notes, r.date as date')
             ->from(ExerciseResult::class, 'r')
             ->leftJoin('r.exercise', 'e')
             ->where('e IN (:exercises)')
             ->orderBy('r.date', 'DESC')
+            ->addOrderBy('e.id', 'ASC')
             ->setMaxResults(\count($exercises))
             ->setParameter('exercises', $exercises);
 
-        $results = $qb->getQuery()->getResult();
+        $results = ($qb->getQuery()->getResult());
 
-        return \array_map(fn ($result) => $result['weight'], $results);
+        return \array_map(fn ($result) => [
+            'exerciseName' => $result['exerciseName'],
+            'weight'       => $result['weight'],
+            'notes'        => $result['notes'],
+            'date'         => $result['date']->format('d-m-Y')
+        ], $results);
     }
 }

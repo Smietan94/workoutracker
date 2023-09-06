@@ -27,7 +27,11 @@ class AuthMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if ($user = $this->auth->user()) {
-            $this->twig->getEnvironment()->addGlobal('auth', ['id' => $user->getId(), 'username' => $user->getUsername()]);
+            $this->twig->getEnvironment()->addGlobal('auth', [
+                'id'                => $user->getId(), 
+                'username'          => $user->getUsername(), 
+                'mainWorkoutPlanId' => $user->getMainWorkoutPlanId(),
+            ]);
 
             return $handler->handle($request->withAttribute('user', $user));
         }

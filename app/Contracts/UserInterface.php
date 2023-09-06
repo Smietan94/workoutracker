@@ -10,4 +10,5 @@ interface UserInterface
     public function getPassword(): string;
     public function getName(): string;
     public function getUsername(): string;
+    public function getMainWorkoutPlanId(): ?int;
 }

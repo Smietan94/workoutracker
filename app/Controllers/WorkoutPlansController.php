@@ -96,7 +96,6 @@ class WorkoutPlansController
             $response,
             \array_map($transformer, (array) $workoutPlans->getIterator()),
             $params->draw,
-            $total,
             $total
         );
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 #region Use-Statements
 use App\Config;
 use App\Middleware\CsrfFieldsMiddleware;
+use App\Middleware\MainWorkoutPlanMiddleware;
 use App\Middleware\OldFormDataMiddleware;
 use App\Middleware\StartSessionMiddleware;
 use App\Middleware\ValidationErrorsMiddleware;
@@ -22,11 +23,11 @@ return function (App $app) {
     $app->add(MethodOverrideMiddleware::class);
     $app->add(CsrfFieldsMiddleware::class);
     $app->add('csrf');
+    $app->add(StartSessionMiddleware::class);
     $app->add(TwigMiddleware::create($app, $container->get(Twig::class)));
     $app->add(ValidationExceptionMiddleware::class);
     $app->add(ValidationErrorsMiddleware::class);
     $app->add(OldFormDataMiddleware::class);
-    $app->add(StartSessionMiddleware::class);
     $app->addBodyParsingMiddleware();
     $app->addErrorMiddleware(
         (bool) $config->get('display_error_details'),

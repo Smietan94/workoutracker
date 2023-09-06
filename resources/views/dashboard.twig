@@ -14,22 +14,58 @@
 
 {% block content %}
     <div class="dashboard">
-        <div class="top-container mb-4 row g-0 ">
-            <div class="col-8 border-end border-dark border-3">
-                <div class="row justify-content-between">
+        <div class="top-container mb-4 row g-0">
+            <div class="col-7 border-end border-dark border-3">
+                <div id="resultChartContainer"></div>
+                {# <div class="row justify-content-between">
                     <div class="col p-4">N/A</div>
                     <div class="col p-4">N/A</div>
                     <div class="col p-4">N/A</div>
                 </div>
                 <div class="row">
                     <div class="col p-4"></div>
-                </div>
+                </div> #}
             </div>
-            <div class="col p-4">
-                Latest Workout
+            <div class="col py-2 px-3 col-scroll" class="chart-container">
+                <table id="lastTrainingDayTable" class="table table-secondary table-striped table-hover mt-3 mb-5">
+                    <p><h3>Latest Workout</h3></p>
+                    <thead>
+                        <tr>
+                            <th scope="col" class="col-5">Exercise</th>
+                            <th scope="col" class="col-2">Weight</th>
+                            <th scope="col" class="col-2">Notes</th>
+                            <th scope="col" class="col-3">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for trainingDayData in lastTrainingsData %}
+                            {% set trainingDayIndex = loop.index %}
+                            <tr><th colspan="4" class="text-center fw-bold">Training Day {{ trainingDayIndex }}</th></tr>
+                            {% if trainingDayData %}
+                                {% for exercise in trainingDayData %}
+                                    {% set exerciseIndex = loop.index %}
+                                    <tr>
+                                        <th class="fw-light">{{ exercise.exerciseName }}</th>
+                                        <th class="fw-light">{{ exercise.weight }}</th>
+                                        <th>
+                                            {% include "notes_modal.twig" %}
+                                            <button type="button" class="btn btn-sm btn-secondary" 
+                                                data-bs-toggle="modal" data-bs-target="#notesModal{{ trainingDayIndex }}{{ exerciseIndex }}">
+                                                Open
+                                            </button>
+                                        </th>
+                                        <th class="fw-light">{{ exercise.date }}</th>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr><th colspan="4" class="text-center fw-light">No Records Yet</th></tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
-        <div class="categories-container row ">
+        {# <div class="categories-container row ">
             <div class="col">
                 <div class="category-card p-4 mb-4">Category 1</div>
             </div>
@@ -40,8 +76,8 @@
                 <div class="category-card p-4 mb-4">Category 3</div>
             </div>
             <div class="col">
-                <div class="category-card p-4 mb-4">Category 4</div>
+                <div class="category-card p-4 mb-4"></div>
             </div>
-        </div>
+        </div> #}
     </div>
 {% endblock %}

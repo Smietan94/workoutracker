@@ -9,7 +9,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 class ResponseFormatter
 {
     public function asJson(
-        Response $response, 
+        Response $response,
         mixed $data,
         int $flags = \JSON_HEX_TAG | \JSON_HEX_AMP | \JSON_HEX_QUOT | \JSON_HEX_APOS | \JSON_THROW_ON_ERROR
     ): Response {
@@ -18,6 +18,18 @@ class ResponseFormatter
         $response->getBody()->write(\json_encode($data, $flags));
 
         return $response;
+    }
+
+    public function asChart(
+        Response $response,
+        array $data,
+    ) {
+        return $this->asJson(
+            $response,
+            [
+                'data' => $data
+            ]
+        );
     }
 
     public function asDataTable(
