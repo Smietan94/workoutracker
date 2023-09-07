@@ -6,6 +6,7 @@ namespace App\Controllers;
 
 #region Use-Statements
 
+use App\Enum\WorkoutPeriod;
 use App\ResponseFormatter;
 use App\Services\HomeService;
 use App\Services\TrainingDayService;
@@ -35,19 +36,41 @@ class HomeController
 
     public function indexWorkoutPlan(Request $request, Response $response, array $args): Response
     {
-        $workoutPlanId         = (int) $args['id'];
-        $workoutPlan           = $this->workoutPlanService->getById($workoutPlanId);
+        $workoutPlanId   = (int) $args['id'];
+        $workoutPlan     = $this->workoutPlanService->getById($workoutPlanId);
+        $user            = $workoutPlan->getUser();
+        $workoutPlans    = $user->getWorkoutPlans()->toArray();
+        $workoutPlansIds = \array_map(
+            fn ($workoutPlan) => [
+                'workoutPlanName' => $workoutPlan->getName(),
+                'workoutPlanId'   => $workoutPlan->getId()
+            ], $workoutPlans);
+
         $trainingDays          = $workoutPlan->getTrainingDays()->toArray();
-        $trainingDaysExercises = \array_map(fn ($trainingDay) => $trainingDay->getExercises()->toArray(), $trainingDays);
+        $trainingDaysExercises = \array_map(
+            fn ($trainingDay) => $trainingDay->getExercises()->toArray(), 
+            $trainingDays
+        );
+
         $lastTrainigDaysData   = \array_map(
             fn ($exercises) => $this->workoutRecordService->getLastTrainingData($exercises), 
             $trainingDaysExercises
         );
-        // $this->homeService->formatTrainingDayData($this->homeService->getTrainingDayData($trainingDaysExercises[0]));
 
-        $data =[
-            'lastTrainingsData' => $lastTrainigDaysData,
-        ];
+        if ($this->homeService->allItemsEmpty($lastTrainigDaysData)) {
+            $data =[
+                'lastTrainingsData' => null,
+                'workoutPlansData'  => $workoutPlansIds
+            ];
+        }else {
+            $data =[
+                'lastTrainingsData' => $lastTrainigDaysData,
+                'workoutPlansData'  => $workoutPlansIds,
+            ];
+        }
+
+        if (empty($lastTrainigDaysData)) {
+        }
 
         return $this->twig->render(
             $response,
@@ -58,12 +81,18 @@ class HomeController
 
     public function load(Request $request, Response $response, array $args): Response
     {
-        $workoutPlanId = (int) $args['id'];
-        $workoutPlan   = $this->workoutPlanService->getById($workoutPlanId);
-        $trainingDays  = $workoutPlan->getTrainingDays()->toArray();
-        $exercises     = $trainingDays[0]->getExercises()->toArray();
+        $workoutPlanId    = (int) $args['id'];
+        $trainingDayIndex = (int) $args['trainingDayIndex'];
+        $period           = (int) $args['period'];
+        $workoutPlan      = $this->workoutPlanService->getById($workoutPlanId);
+        $trainingDays     = $workoutPlan->getTrainingDays()->toArray();
 
-        $data         = $this->homeService->getTrainingDayData($exercises);
+        if(!isset($trainingDays[$trainingDayIndex])) {
+            return $this->responseFormatter->asChart($response, [null]);
+        }
+
+        $exercises    = $trainingDays[$trainingDayIndex]->getExercises()->toArray(); // TODO
+        $data         = $this->homeService->getTrainingDayData($exercises, $period);
         $formatedData = $this->homeService->formatTrainingDayData($data);
 
         return $this->responseFormatter->asChart($response, $formatedData);

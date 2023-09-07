@@ -54,9 +54,11 @@
                             >
                         </th>
                         <th>
-                            <input type="text" name="exercises[{{ exerciseIndex - 1 }}][notes]" 
-                                class="form-control"
-                                placeholder="Notes">
+                            <div class="">
+                                <textarea name="exercises[{{ exerciseIndex - 1 }}][notes]" 
+                                    class="form-control w-100"
+                                    placeholder="Notes"></textarea>
+                            </div>
                         </th>
                     </tr>
                 {% endfor %}

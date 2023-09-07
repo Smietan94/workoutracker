@@ -15,55 +15,109 @@
 {% block content %}
     <div class="dashboard">
         <div class="top-container mb-4 row g-0">
-            <div class="col-7 border-end border-dark border-3">
-                <div id="resultChartContainer"></div>
-                {# <div class="row justify-content-between">
-                    <div class="col p-4">N/A</div>
-                    <div class="col p-4">N/A</div>
-                    <div class="col p-4">N/A</div>
+            {% if lastTrainingsData is empty %}
+                <div class="col p-4">
+                    <h2>
+                        No Trainings Recorded Yet
+                    </h2>
                 </div>
-                <div class="row">
-                    <div class="col p-4"></div>
-                </div> #}
-            </div>
-            <div class="col py-2 px-3 col-scroll" class="chart-container">
-                <table id="lastTrainingDayTable" class="table table-secondary table-striped table-hover mt-3 mb-5">
-                    <p><h3>Latest Workout</h3></p>
-                    <thead>
-                        <tr>
-                            <th scope="col" class="col-5">Exercise</th>
-                            <th scope="col" class="col-2">Weight</th>
-                            <th scope="col" class="col-2">Notes</th>
-                            <th scope="col" class="col-3">Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for trainingDayData in lastTrainingsData %}
-                            {% set trainingDayIndex = loop.index %}
-                            <tr><th colspan="4" class="text-center fw-bold">Training Day {{ trainingDayIndex }}</th></tr>
-                            {% if trainingDayData %}
-                                {% for exercise in trainingDayData %}
-                                    {% set exerciseIndex = loop.index %}
-                                    <tr>
-                                        <th class="fw-light">{{ exercise.exerciseName }}</th>
-                                        <th class="fw-light">{{ exercise.weight }}</th>
-                                        <th>
-                                            {% include "notes_modal.twig" %}
-                                            <button type="button" class="btn btn-sm btn-secondary" 
-                                                data-bs-toggle="modal" data-bs-target="#notesModal{{ trainingDayIndex }}{{ exerciseIndex }}">
-                                                Open
-                                            </button>
-                                        </th>
-                                        <th class="fw-light">{{ exercise.date }}</th>
-                                    </tr>
-                                {% endfor %}
-                            {% else %}
-                                <tr><th colspan="4" class="text-center fw-light">No Records Yet</th></tr>
-                            {% endif %}
+                <div class="col dropdown p-4 text-end">
+                    <button class="btn btn-primary dropdown-toggle px-4" type="button"
+                        id="dropdownWorkoutPlanSelectButton" 
+                        data-bs-toggle="dropdown" aria-expand="false">
+                        Workout Plans
+                    </button>
+                    <ul class="dropdown-menu px-1" aria-labelledby="dropdownWorkoutPlanSelectButton">
+                        {% for workoutPlan in workoutPlansData %}
+                            <li><a class="dropdown-item" href="/{{ workoutPlan.workoutPlanId }}">{{ workoutPlan.workoutPlanName }}</a></li>
                         {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                    </ul>
+                </div>
+            {% else %}
+                <div class="col-7 border-end border-dark border-3">
+                    <div class="row justify-content-between training-days-btn-container text-center">
+                        <div class="col p-4">
+                            <select class="form-select" id="trainingDaySelectInput">
+                                <option disabled selected value="0">Training Day</option>
+                                {% for trainingDay in lastTrainingsData %}
+                                    {% set trainingDayIndex = loop.index %}
+                                        <option value="{{ trainingDayIndex - 1 }}">Training Day: {{ trainingDayIndex }}</button>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col p-4">
+                            <select class="form-select" id="periodSelectInput">
+                                <option disabled selected value="0">Period</option>
+                                <option value="0">Month</option>
+                                <option value="1">3 Months</option>
+                                <option value="2">6 Months</option>
+                                <option value="3">1 Year</option>
+                                <option value="4">From the beginning</option>
+                            </select>
+                        </div>
+                        <div class="col p-4">
+                            <button type="submit" class="btn btn-primary w-100" id="submitChartBtn">Submit Chart</button>
+                        </div>
+                    </div>
+                    <div id="resultChartContainer"></div>
+                </div>
+                <div class="col py-2 px-3 col-scroll" class="chart-container">
+                    <table id="lastTrainingDayTable" class="table table-secondary table-striped table-hover mt-3 mb-5">
+                        <div class="row">
+                            <div class="col">
+                                <p><h3>Latest Workout</h3></p>
+                            </div>
+                            <div class="col py-3">
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle w-100" type="button"
+                                        id="dropdownWorkoutPlanSelectButton" 
+                                        data-bs-toggle="dropdown" aria-expand="false">
+                                        Workout Plans
+                                    </button>
+                                    <ul class="dropdown-menu w-100" aria-labelledby="dropdownWorkoutPlanSelectButton">
+                                        {% for workoutPlan in workoutPlansData %}
+                                            <li><a class="dropdown-item" href="/{{ workoutPlan.workoutPlanId }}">{{ workoutPlan.workoutPlanName }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <thead>
+                            <tr>
+                                <th scope="col" class="col-5">Exercise</th>
+                                <th scope="col" class="col-2">Weight</th>
+                                <th scope="col" class="col-2">Notes</th>
+                                <th scope="col" class="col-3">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trainingDayData in lastTrainingsData %}
+                                {% set trainingDayIndex = loop.index %}
+                                <tr><th colspan="4" class="text-center fw-bold">Training Day {{ trainingDayIndex }}</th></tr>
+                                {% if trainingDayData is empty %}
+                                    <tr><th colspan="4" class="text-center fw-light">No Records Yet</th></tr>
+                                {% else %}
+                                    {% for exercise in trainingDayData %}
+                                        {% set exerciseIndex = loop.index %}
+                                        <tr>
+                                            <th class="fw-light">{{ exercise.exerciseName }}</th>
+                                            <th class="fw-light">{{ exercise.weight }}</th>
+                                            <th>
+                                                {% include "notes_modal.twig" %}
+                                                <button type="button" class="btn btn-sm btn-secondary" 
+                                                    data-bs-toggle="modal" data-bs-target="#notesModal{{ trainingDayIndex }}{{ exerciseIndex }}">
+                                                    Open
+                                                </button>
+                                            </th>
+                                            <th class="fw-light">{{ exercise.date }}</th>
+                                        </tr>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
         </div>
         {# <div class="categories-container row ">
             <div class="col">

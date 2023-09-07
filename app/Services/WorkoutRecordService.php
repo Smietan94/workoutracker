@@ -100,7 +100,7 @@ class WorkoutRecordService
         return $exercisesData;
     }
 
-    public function getLastTrainingData(array $exercises): array
+    public function getLastTrainingData(array $exercises): ?array
     {
         $qb = $this->entityManager
             ->createQueryBuilder()
@@ -114,6 +114,10 @@ class WorkoutRecordService
             ->setParameter('exercises', $exercises);
 
         $results = ($qb->getQuery()->getResult());
+
+        if (empty($results)) {
+            return null;
+        }
 
         return \array_map(fn ($result) => [
             'exerciseName' => $result['exerciseName'],
