@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 #region Use-Statements
-
-use App\Enum\WorkoutPeriod;
 use App\ResponseFormatter;
 use App\Services\HomeService;
 use App\Services\TrainingDayService;
@@ -46,17 +44,20 @@ class HomeController
                 'workoutPlanId'   => $workoutPlan->getId()
             ], $workoutPlans);
 
+        // Retrieves exercises
         $trainingDays          = $workoutPlan->getTrainingDays()->toArray();
         $trainingDaysExercises = \array_map(
             fn ($trainingDay) => $trainingDay->getExercises()->toArray(), 
             $trainingDays
         );
 
+        // Retrieves last training results
         $lastTrainigDaysData   = \array_map(
             fn ($exercises) => $this->workoutRecordService->getLastTrainingData($exercises), 
             $trainingDaysExercises
         );
 
+        // Checking if any trainig records are provided
         if ($this->homeService->allItemsEmpty($lastTrainigDaysData)) {
             $data =[
                 'lastTrainingsData' => null,
@@ -67,9 +68,6 @@ class HomeController
                 'lastTrainingsData' => $lastTrainigDaysData,
                 'workoutPlansData'  => $workoutPlansIds,
             ];
-        }
-
-        if (empty($lastTrainigDaysData)) {
         }
 
         return $this->twig->render(
@@ -87,11 +85,12 @@ class HomeController
         $workoutPlan      = $this->workoutPlanService->getById($workoutPlanId);
         $trainingDays     = $workoutPlan->getTrainingDays()->toArray();
 
+        // if invalid training day provided, returns null
         if(!isset($trainingDays[$trainingDayIndex])) {
             return $this->responseFormatter->asChart($response, [null]);
         }
 
-        $exercises    = $trainingDays[$trainingDayIndex]->getExercises()->toArray(); // TODO
+        $exercises    = $trainingDays[$trainingDayIndex]->getExercises()->toArray();
         $data         = $this->homeService->getTrainingDayData($exercises, $period);
         $formatedData = $this->homeService->formatTrainingDayData($data);
 

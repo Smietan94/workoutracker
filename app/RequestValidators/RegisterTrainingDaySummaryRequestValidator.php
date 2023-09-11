@@ -20,6 +20,7 @@ class RegisterTrainingDaySummaryRequestValidator implements RequestValidatorInte
         private readonly SessionInterface $session
     ) {
     }
+
     public function validate(array $data): array
     {
         $v = new Validator($data);
@@ -34,13 +35,16 @@ class RegisterTrainingDaySummaryRequestValidator implements RequestValidatorInte
         $numericInputs  = [
             'exercises.*.weight'
         ];
-        $lengthMax      = [
+
+        // setting max string length for inputs
+        $lengthMax = [
             'exercises.*.weight' => 3,
             'exercises.*.notes'  => 140,
             'trainingDayDate'    => 10,
             'trainingDayNotes'   => 140,
         ];
 
+        // Setting labels
         $v->labels([
             'exercises.*.weight' => 'Weight',
             'exercises.*.notes'  => 'Notes',
@@ -55,10 +59,12 @@ class RegisterTrainingDaySummaryRequestValidator implements RequestValidatorInte
             'lengthMax' => $lengthMax
         ]);
 
+        // Checking if workout plan does exist
         $v->rule(function ($field, $value, $params, $fields) {
             return $this->entityManager->find(TrainingDay::class, (int) $value);
         }, 'trainingDayId')->message('Workout plan does not exists');
 
+        // Checking if valid user tries to register summary
         $v->rule(function ($field, $value, $params, $fields) {
             $trainingDay  = $this->entityManager->find(TrainingDay::class, (int) $value);
             if ($trainingDay) {

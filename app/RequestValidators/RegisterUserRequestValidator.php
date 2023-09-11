@@ -26,12 +26,16 @@ class RegisterUserRequestValidator implements RequestValidatorInterface
         $v->rule('required', ['name', 'username', 'email', 'password', 'confirmPassword']);
         $v->rule('email', 'email');
         $v->rule('equals', 'confirmPassword', 'password')->label('Confirm Password');
+
+        // Checking if user with added email already exists
         $v->rule(
             fn ($field, $value, $params, $fields) => !$this->entityManager->getRepository(User::class)->count(
                 ['email' => $value]
             ),
             'email'
         )->message('User with given email address already exists');
+
+        // Checking if user with added username already exists
         $v->rule(
             fn ($field, $value, $params, $fields) => !$this->entityManager->getRepository(User::class)->count(
                 ['username' => $value]

@@ -101,14 +101,18 @@ class TrainingPlanService
                 $this->exerciseService->storeExercise($exercise);
             }
         } elseif (\count($exercises) < \count($exercisesToUpdate)) {
-            $exercisesToRemove = $this->getExercisesToRemove($exercises, $exercisesToUpdate);
+            if (empty($exercises)) {
+                
+            } else {
+                $exercisesToRemove = $this->getExercisesToRemove($exercises, $exercisesToUpdate);
+            }
             $this->exerciseService->removeExercises($exercisesToRemove);
         }
 
         $exercisesToUpdate = (array) $trainingDay->getExercises()->getIterator();
 
         for ($i = 0; $i < \count($exercisesToUpdate); $i++) {
-            $this->processExercise($exercisesToUpdate[$i], $exercises[$i]);
+            $this->processExercise(\array_values($exercisesToUpdate)[$i], $exercises[$i]);
         }
     }
 

@@ -48,9 +48,9 @@ window.addEventListener('DOMContentLoaded', function() {
 
     const table = new DataTable('#workoutPlansTable', {
         serverSide: true,
-        ajax: '/workoutplans/load',
+        ajax:       '/workoutplans/load',
         orderMulti: false,
-        columns: [
+        columns:    [
             {data: row => `
                 <a href="/trainingPlan/${ row.id }">${ row.name }</a>
             `},

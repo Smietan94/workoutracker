@@ -27,10 +27,15 @@ function processButtons(buttons, buttonFunction) {
 function removeExerciseRow(removeExerciseButton) {
     const exerciseRowToDelete = removeExerciseButton.closest('tr[data-exercise-id]')
     const tbody               = exerciseRowToDelete.closest('tbody')
+    const exercisesRows       = tbody.querySelectorAll('tr')
 
     if (exerciseRowToDelete) {
-        exerciseRowToDelete.remove()
-        updateTbody(tbody)
+        if (exercisesRows.length <= 1) {
+            alert('Atleast one exercise required')
+        } else {
+            exerciseRowToDelete.remove()
+            updateTbody(tbody)
+        }
     } else {
         alert('Exercise row not found')
     }
@@ -71,9 +76,9 @@ function addSet(addSetButton) {
 }
 
 function removeSet(removeSetButton) {
-    const exerciseGridIndex    = removeSetButton.value
-    const setsContainer = document.getElementById(`setsContainer${ exerciseGridIndex }`)
-    const setsInputs    = setsContainer.querySelectorAll('.set-input-div')
+    const exerciseGridIndex = removeSetButton.value
+    const setsContainer     = document.getElementById(`setsContainer${ exerciseGridIndex }`)
+    const setsInputs        = setsContainer.querySelectorAll('.set-input-div')
     
     if (setsInputs.length > 1) {
         let lastInputDiv = setsInputs[setsInputs.length - 1]

@@ -11,7 +11,7 @@
     <div class="container content-body">
         {% if errors %}
             <div class='alert alert-danger text-bold text-center'>
-                <p>{{ errors['trainingDays.*.exercises.*.exerciseName'] | first }}</p>
+                <p>{{ errors['trainingDays.*.exercises.*.exerciseName'] | last}}</p>
                 <p>{{ errors['trainingDays.*.exercises.*.description'] | first }}</p>
                 <p>{{ errors['trainingDays.*.exercises.*.category'] | first }}</p>
                 <p>{{ errors['trainingDays.*.exercises.*.sets.*'] | first }}</p>
@@ -118,7 +118,14 @@
                     </tfoot>
                 </table>
             {% endfor %}
-            <input type="submit" class="btn btn-dark mt-3" value="Update Workout Plan">
+            <div class="row">
+                <div class="col">
+                    <input type="submit" class="btn btn-lg btn-dark mt-3" value="Update Workout Plan">
+                </div>
+                <div class="col text-end">
+                    <a href="/trainingPlan/{{ workoutPlanId }}" role="button" class="btn btn-lg btn-dark mt-3">Discard Changes</a>
+                </div>
+            </div>
         </form>
     </div>
 {% endblock %}

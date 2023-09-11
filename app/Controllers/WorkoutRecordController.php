@@ -33,11 +33,12 @@ class WorkoutRecordController
 
     public function index(Request $request, Response $response, array $args): Response
     {
-        $trainingDayId = (int) $args['id'];
-        // \var_dump($this->workoutRecordService->getTrainingDayData($trainingDayId));
-        $data = [
+        $workoutPlanId = (int) $args['workoutPlanId'];
+        $trainingDayId = (int) $args['trainingDayId'];
+        $data          = [
+            'workoutPlanId' => $workoutPlanId,
             'trainingDayId' => $trainingDayId,
-            'exercises'     => $this->workoutRecordService->getTrainingDayData($trainingDayId),
+            'exercises'     => $this->workoutRecordService->getTrainingDayData($trainingDayId), // retrieving and formatting trainings data for front end
         ];
 
         return $this->twig->render(
@@ -49,19 +50,24 @@ class WorkoutRecordController
 
     public function exercisesSummary(Request $request, Response $response, array $args): Response
     {
+        // data validation
         $data = $this->requestValidatorFactory->make(RegisterTrainingDaySummaryRequestValidator::class)->validate(
             $request->getParsedBody()
         );
 
         $date = DateTime::createFromFormat('Y-m-d', $data['trainingDayDate']);
 
+        $this->recordExercises($data, $date);
+        $this->workoutRecordService->recordTrainingDay((int) $data['trainingDayId'], $date, $data['trainingDayNotes']);
+
+        return $response->withHeader('Location', '/workoutplans');
+    }
+
+    private function recordExercises(array $data, DateTime $date): void
+    {
         foreach ($data['exercises'] as $exerciseData) {
             $exerciseSummaryParams = $this->workoutRecordService->getExerciseSummaryParamsDTO($exerciseData, $date);
             $this->workoutRecordService->recordExercise($exerciseSummaryParams);
         }
-
-        $this->workoutRecordService->recordTrainingDay((int) $data['trainingDayId'], $date, $data['trainingDayNotes']);
-
-        return $response->withHeader('Location', '/workoutplans');
     }
 }

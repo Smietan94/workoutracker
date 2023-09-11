@@ -17,11 +17,7 @@ window.addEventListener('DOMContentLoaded', function() {
     get(`/load/${ workoutPlanId }/0/0`)
         .then(response => response.json())
         .then(data => {
-            if (!chart) {
-                createChart(data)
-            } else {
-                updateChart(data)
-            }
+            createChart(data)
         })
 
     document.getElementById('submitChartBtn').addEventListener('click', function (event) {
@@ -59,7 +55,7 @@ function createChart(chartData) {
 
     chart = Highcharts.chart(chartContainer, {
         chart: {
-            type: 'spline',
+            type: 'line',
             height: 600,
             backgroundColor: '#D8D9DA'
         },
@@ -67,7 +63,10 @@ function createChart(chartData) {
             text: 'Workout Results'
         },
         xAxis: {
-            categories: chartData.data.dates
+            type: 'datetime',
+            dateTimeLabelFormats: { 
+                daty:'%d-$m-%Y'
+            },
         },
         yAxis: {
             title: {

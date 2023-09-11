@@ -7,6 +7,7 @@ namespace App\Controllers;
 #region Use-Statemsnts
 use App\Contracts\RequestValidatorFactoryInterface;
 use App\Contracts\SessionInterface;
+use App\DTO\WorkoutPlanParams;
 use App\Entity\WorkoutPlan;
 use App\RequestValidators\RegisterExerciseRequestValidator;
 use App\RequestValidators\RegisterWorkoutPlanValidator;
@@ -49,18 +50,11 @@ class WorkoutPlansController
 
     public function store(Request $request, Response $response): Response
     {
-        $data = $this->requestValidatorFactory->make(RegisterWorkoutPlanValidator::class)->validate(
-            $request->getParsedBody()
-        );
-
-        $params = $this->workoutPlanService->getWorkoutPlanParams($data, $request->getAttribute('user'));
-
+        $data        = $this->validateRequestData(RegisterWorkoutPlanValidator::class, $request->getParsedBody());
+        $params      = $this->workoutPlanService->getWorkoutPlanParams($data, $request->getAttribute('user'));
         $workoutPlan = $this->workoutPlanService->create($params);
 
-        for ($i=0; $i < $params->trainingsPerWeek; $i++) {
-            $this->trainingDayService->create($workoutPlan);
-        }
-
+        $this->createTrainingDays($params->trainingsPerWeek, $workoutPlan);
         $this->session->put("TRAININGS_PER_WEEK", $params->trainingsPerWeek);
         $this->session->put('CURRENTLY_ADDED_WORKOUT_PLAN_ID', $workoutPlan->getId());
 
@@ -69,7 +63,7 @@ class WorkoutPlansController
 
     public function delete(Request $request, Response $response, array $args): Response
     {
-        $this->workoutPlanService->delete((int) $args['id']);
+        $this->workoutPlanService->delete((int) $args['id']); // deleting workout plan
 
         return $response;
     }
@@ -79,6 +73,7 @@ class WorkoutPlansController
         $params = $this->requestService->getDataTableQueryParams($request);
         $workoutPlans = $this->workoutPlanService->getPaginatedWorkoutPlans($params);
 
+        // data format pattern
         $transformer = function (WorkoutPlan $workoutPlan) {
             return [
                 'id'               => $workoutPlan->getId(),
@@ -90,23 +85,17 @@ class WorkoutPlansController
             ];
         };
 
-        $total = \count($workoutPlans);
-
         return $this->responseFormatter->asDataTable(
             $response,
             \array_map($transformer, (array) $workoutPlans->getIterator()),
             $params->draw,
-            $total
+            \count($workoutPlans)
         );
     }
 
     public function get(Request $request, Response $response, array $args): Response
     {
-        $workoutPlan = $this->workoutPlanService->getById((int) $args['id']);
-
-        if (! $workoutPlan) {
-            return $response->withStatus(404);
-        }
+        $workoutPlan = $this->isWorkoutPlanExist($response, $args);
 
         $data = [
             'id'    => $workoutPlan->getId(),
@@ -119,16 +108,10 @@ class WorkoutPlansController
 
     public function update(Request $request, Response $response, array $args): Response
     {
-        $data = $this->requestValidatorFactory->make(UpdateWorkoutPlanRequestValidator::class)->validate(
-            $args + $request->getParsedBody()
-        );
+        $data = $this->validateRequestData(UpdateWorkoutPlanRequestValidator::class, $args + $request->getParsedBody());
 
-        $workoutPlan = $this->workoutPlanService->getById((int) $data['id']);
+        $workoutPlan = $this->isWorkoutPlanExist($response, $data);
         $params      = $this->workoutPlanService->getWorkoutPlanParams($data, $request->getAttribute('user'));
-
-        if (! $workoutPlan) {
-            return $response->withStatus(404);
-        }
 
         $this->workoutPlanService->update($workoutPlan, $params);
 
@@ -137,9 +120,7 @@ class WorkoutPlansController
 
     public function addExercise(Request $request, Response $response): Response
     {
-        $data = $this->requestValidatorFactory->make(RegisterExerciseRequestValidator::class)->validate(
-            $request->getParsedBody()
-        );
+        $data = $this->validateRequestData(RegisterExerciseRequestValidator::class, $request->getParsedBody());
 
         $workoutPlanId = $this->session->get('CURRENTLY_ADDED_WORKOUT_PLAN_ID');
         $workoutPlan   = $this->workoutPlanService->getById($workoutPlanId);
@@ -148,11 +129,12 @@ class WorkoutPlansController
 
         $category = $this->categoryService->getByName($data['categoryName']);
 
+        // if category does not exist it creates new one
         if (! $category) {
             $this->categoryService->create($data['categoryName']);
         } 
 
-        $params   = $this->exerciseService->getExerciseParams(($data + ['trainingDayId' => $trainingDays[$trainingDay]->getId()]));
+        $params = $this->exerciseService->getExerciseParams(($data + ['trainingDayId' => $trainingDays[$trainingDay]->getId()]));
         $this->exerciseService->storeExercise($params);
 
         return $response;
@@ -165,5 +147,24 @@ class WorkoutPlansController
         ];
 
         return $this->responseFormatter->asJson($response, $data);
-    } 
+    }
+
+    private function isWorkoutPlanExist(Response $response, array $data): WorkoutPlan|Response
+    {
+        $workoutPlan = $this->workoutPlanService->getById((int) $data['id']);
+
+        return $workoutPlan ?? $response->withStatus(404); // checks if workout plan exists then returns it or response with 404 status
+    }
+
+    private function createTrainingDays(int $trainingsPerWeek, WorkoutPlan $workoutPlan): void
+    {
+        for ($i=0; $i < $trainingsPerWeek; $i++) {
+            $this->trainingDayService->create($workoutPlan); // creating new training day
+        }
+    }
+
+    private function validateRequestData(string $class, array $data): array
+    {
+        return $this->requestValidatorFactory->make($class)->validate($data);
+    }
 }

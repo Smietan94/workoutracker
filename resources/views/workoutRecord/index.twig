@@ -19,7 +19,7 @@
                 <p>{{ errors.trainingDayNotes | first }}</p>
             </div>
         {% endif %}
-        <form action="{{ trainingDayId }}" method="post">
+        <form action="/recordWorkout/trainingDaySummary/{{ trainingDayId }}" method="post">
         {{ csrf.fields | raw }}
             <table class="table table-secondary table-striped table-hover mt-3">
             <thead>
@@ -47,7 +47,11 @@
                             <input type="number" name="exercises[{{ exerciseIndex - 1 }}][weight]" 
                                 class="form-control" min="0" step=".5"
                                 {% if exercise['weight'] is defined %}
-                                    placeholder="Previous record: {{ exercise['weight'] }}"
+                                    {% if exercise['weight'] != null %}
+                                        placeholder="Previous record: {{ exercise['weight'] }}"
+                                    {% else %}
+                                        placeholder="New exercise"
+                                    {% endif %}
                                 {% else %}
                                     placeholder="No Previous Records"
                                 {% endif %}
@@ -76,8 +80,11 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="6" class="text-center">
+                    <td colspan="4" class="text-center">
                         <input type="submit" class="btn btn-dark w-100" value="Save">
+                    </td>
+                    <td colspan="2" class="text-center">
+                        <a href="/trainingPlan/{{ workoutPlanId }}" role="button" class="btn btn-dark w-100">Discard Record</a>
                     </td>
                 </tr>
             </tfoot>

@@ -32,7 +32,7 @@ class HomeService
                 ->setParameter('exercises', $exercises);
         } else {
             $endDate = new DateTime();
-            // $endDate = (new DateTime())->modify('+1 month');
+            // $endDate = (new DateTime())->modify('+2 month');
             $startDate = (new DateTime())->modify($modifier);
             $qb->andWhere('r.date BETWEEN :startDate AND :endDate')
                 ->orderBy('r.date', 'ASC')
@@ -70,10 +70,11 @@ class HomeService
                     ];
                 }
 
-                $carry[$name]['data'][] = (float) $weight;
+                $carry[$name]['data'][] = [\strtotime($item['date']) * 1000 , (float) $weight];
 
                 return $carry;
         });
+
 
         if (!empty($series)) {
             $series = \array_values($series);

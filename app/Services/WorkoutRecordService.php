@@ -31,13 +31,15 @@ class WorkoutRecordService
         $trainingDayUser = $trainingDay->getWorkoutPlan()->getUser();
         $currentUser     = $this->entityManager->find(User::class, $this->session->get('user'));
 
+        // checks if training days user is same as current user
         if ($trainingDayUser !== $currentUser) {
             throw new InvalidUserException("Invalid user, You dont have access to this workout plan");
         }
 
-        $exercises           = $trainingDay->getExercises()->toArray();
+        $exercises        = $trainingDay->getExercises()->toArray();
         $lastTrainingData = $this->getLastTrainingData($exercises);
 
+        
         if (! $lastTrainingData) {
             $exercisesData = \array_map(fn ($exercise) => [
                 'exerciseName' => $exercise->getExerciseName(),
@@ -93,7 +95,7 @@ class WorkoutRecordService
                 'exerciseName' => $exercise->getExerciseName(),
                 'exerciseId'   => $exercise->getId(),
                 'sets'         => \array_map(fn ($set) => $set->getReps(), $exercise->getSets()->toArray()),
-                'weight'       => (float) $weights[$index]['weight']
+                'weight'       => (float) ($weights[$index]['weight'] ?? null),
             ]);
         }
 
@@ -107,10 +109,22 @@ class WorkoutRecordService
             ->select('e.exerciseName as exerciseName, r.weight as weight, r.notes as notes, r.date as date')
             ->from(ExerciseResult::class, 'r')
             ->leftJoin('r.exercise', 'e')
-            ->where('e IN (:exercises)')
-            ->orderBy('r.date', 'DESC')
+            ->where('e IN (:exercises)');
+
+        $subquery = $this->entityManager
+            ->createQueryBuilder()
+            ->select('MAX(r2.date)')
+            ->from(ExerciseResult::class, 'r2')
+            ->where('r2.exercise = r.exercise');
+
+        $qb
+            ->andWhere(
+                $qb->expr()->in(
+                    'r.date',
+                    $subquery->getDQL()
+                )
+            )
             ->addOrderBy('e.id', 'ASC')
-            ->setMaxResults(\count($exercises))
             ->setParameter('exercises', $exercises);
 
         $results = ($qb->getQuery()->getResult());

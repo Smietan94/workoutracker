@@ -64,7 +64,7 @@ return function (App $app) {
     })->add(AuthMiddleware::class);
 
     $app->group('/recordWorkout', function (RouteCollectorProxy $recordWorkout) {
-        $recordWorkout->get('/trainingDaySummary/{id:[0-9]+}', [WorkoutRecordController::class, 'index']);
+        $recordWorkout->get('/trainingDaySummary/{workoutPlanId:[0-9]+}/{trainingDayId:[0-9]+}', [WorkoutRecordController::class, 'index']);
         $recordWorkout->post('/trainingDaySummary/{id:[0-9]+}', [WorkoutRecordController::class, 'exercisesSummary']);
     })->add(AuthMiddleware::class);
 };

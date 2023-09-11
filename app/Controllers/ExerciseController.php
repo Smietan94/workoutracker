@@ -40,6 +40,7 @@ class ExerciseController
     {
         $params = $this->requestService->getDataTableQueryParams($request);
 
+        // Id is validated in web.php
         if ($args['id'] === 'all' ) {
             $exercises = $this->exerciseService->getAllPaginatedExercises($params);
         } else {

@@ -20,6 +20,7 @@ class WorkoutPlanService
     public function __construct(
         private readonly EntityManager $entityManager,
         private readonly SessionInterface $session,
+        private readonly TrainingDayService $trainingDayService
     ) {
     }
 
@@ -106,7 +107,10 @@ class WorkoutPlanService
             throw new \InvalidArgumentException("Workout Plan with ID " . $id . " does not exists.");
         }
 
-        $user->setMainWorkoutPlanId(null);
+        if ($user->getMainWorkoutPlanId() === $workoutPlan->getId()) {
+            $user->setMainWorkoutPlanId(null);
+        }
+
         $this->entityManager->remove($workoutPlan);
         $this->entityManager->flush();
     }

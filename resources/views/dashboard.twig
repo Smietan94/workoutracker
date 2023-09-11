@@ -21,17 +21,21 @@
                         No Trainings Recorded Yet
                     </h2>
                 </div>
-                <div class="col dropdown p-4 text-end">
-                    <button class="btn btn-primary dropdown-toggle px-4" type="button"
-                        id="dropdownWorkoutPlanSelectButton" 
-                        data-bs-toggle="dropdown" aria-expand="false">
-                        Workout Plans
-                    </button>
-                    <ul class="dropdown-menu px-1" aria-labelledby="dropdownWorkoutPlanSelectButton">
-                        {% for workoutPlan in workoutPlansData %}
-                            <li><a class="dropdown-item" href="/{{ workoutPlan.workoutPlanId }}">{{ workoutPlan.workoutPlanName }}</a></li>
-                        {% endfor %}
-                    </ul>
+                <div class="col p-4">
+                    {% if auth.mainWorkoutPlanId != null %}
+                        <div class="col dropdown text-end">
+                            <button class="btn btn-primary dropdown-toggle px-4" type="button"
+                                id="dropdownWorkoutPlanSelectButton" 
+                                data-bs-toggle="dropdown" aria-expand="false">
+                                Workout Plans
+                            </button>
+                            <ul class="dropdown-menu px-1" aria-labelledby="dropdownWorkoutPlanSelectButton">
+                                {% for workoutPlan in workoutPlansData %}
+                                    <li><a class="dropdown-item" href="/{{ workoutPlan.workoutPlanId }}">{{ workoutPlan.workoutPlanName }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
                 </div>
             {% else %}
                 <div class="col-7 border-end border-dark border-3">
@@ -119,19 +123,5 @@
                 </div>
             {% endif %}
         </div>
-        {# <div class="categories-container row ">
-            <div class="col">
-                <div class="category-card p-4 mb-4">Category 1</div>
-            </div>
-            <div class="col">
-                <div class="category-card p-4 mb-4">Category 2</div>
-            </div>
-            <div class="col">
-                <div class="category-card p-4 mb-4">Category 3</div>
-            </div>
-            <div class="col">
-                <div class="category-card p-4 mb-4"></div>
-            </div>
-        </div> #}
     </div>
 {% endblock %}

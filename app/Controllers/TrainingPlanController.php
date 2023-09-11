@@ -54,6 +54,7 @@ class TrainingPlanController
 
     public function updateTrainingPlan(Request $request, Response $response, array $args): Response
     {
+        // Data validation obtained from http request
         $dataToUpdate = $this->requestValidatorFactory->make(UpdateTrainingPlanRequestValidator::class)->validate(
             $request->getParsedBody()
         );

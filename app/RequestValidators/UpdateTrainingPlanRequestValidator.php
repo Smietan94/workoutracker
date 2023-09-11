@@ -12,6 +12,9 @@ use App\Exception\ValidationException;
 use App\Session;
 use Doctrine\ORM\EntityManager;
 use Valitron\Validator;
+
+use function DI\value;
+
 #endregion
 
 class UpdateTrainingPlanRequestValidator implements RequestValidatorInterface
@@ -56,6 +59,7 @@ class UpdateTrainingPlanRequestValidator implements RequestValidatorInterface
             'lengthMax' => $lengthMax
         ]);
 
+        // Check if valid user trying to update workout plan
         $v->rule(function ($field, $value, $params, $fields) {
             $workoutPlan = $this->entityManager->find(WorkoutPlan::class, (int) $value);
             $userId = $workoutPlan->getUser()->getId();
@@ -63,6 +67,7 @@ class UpdateTrainingPlanRequestValidator implements RequestValidatorInterface
         }, 'workoutPlanId')->message('Not your workout plan');
 
         if (!$v->validate()) {
+            \var_dump($v->errors());
             throw new ValidationException($v->errors());
         }
 
